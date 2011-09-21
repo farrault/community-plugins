@@ -1,0 +1,67 @@
+defaultTasks 'build'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+
+group = 'com.xebialabs.deployit.plugins'
+version = '1.4.2-SNAPSHOT'
+
+configurations {
+	compile {
+		transitive = false
+	}
+}
+
+repositories {
+        mavenLocal()
+        if (!rootProject.hasProperty('offline')) {
+                String nexusBaseUrl = 'http://dexter.xebialabs.com/nexus/content'
+                mavenRepo urls: "${nexusBaseUrl}/groups/public/"
+                mavenRepo urls: "${nexusBaseUrl}/repositories/thirdparty/"
+                mavenRepo urls: "${nexusBaseUrl}/repositories/hidden-thirdparty/"
+                org.apache.ivy.util.url.CredentialsStore.INSTANCE.addCredentials("Sonatype Nexus Repository Manager", "dexter.xebialabs.com", "deployment", '_#$(%RJf-W}');
+                mavenRepo urls: "${nexusBaseUrl}/repositories/snapshots"
+                mavenRepo urls: "${nexusBaseUrl}/repositories/releases"
+                mavenCentral()
+        }
+}
+
+dependencies {
+	compile 'com.xebialabs.deployit:plugin-api:1.4.1'
+	compile 'com.xebialabs.deployit.plugins:apache-httpd-plugin:1.4.2-SNAPSHOT'
+	compile 'com.google.collections:google-collections:1.0'
+	compile 'commons-lang:commons-lang:2.5'
+	compile 'log4j:log4j:1.2.14'
+	compile 'commons-io:commons-io:1.4'
+	compile 'commons-collections:commons-collections:3.2.1'
+        compile 'org.apache.velocity:velocity:1.6.1'
+        compile 'org.springframework:spring-core:3.0.5.RELEASE'
+
+	testCompile 'com.xebialabs.deployit.plugins:jbossas-plugin:1.4.2-SNAPSHOT'
+	testCompile 'com.xebialabs.deployit.plugins:tomcat-plugin:1.4.2-SNAPSHOT'
+	testCompile 'junit:junit:4.8.2'
+	testCompile 'com.xebialabs.deployit:test-support:1.4.1'
+}
+
+uploadArchives {
+	repositories.mavenDeployer {
+		repository(url: "http://dexter.xebialabs.com/nexus/content/repositories/releases") {
+			authentication(userName: "deployment", password: '_#$(%RJf-W}')
+		}
+		snapshotRepository(url: "http://dexter.xebialabs.com/nexus/content/repositories/snapshots") {
+			authentication(userName: "deployment", password: '_#$(%RJf-W}')
+		}
+
+	}
+}
+
+task itest(type: Test) {
+	includes = ['**/*Itest.*']
+	testResultsDir = file("${buildDir}/itest-results")
+}
+
+test {
+	excludes = ['**/*Itest.*']
+}

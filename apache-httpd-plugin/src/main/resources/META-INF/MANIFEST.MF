@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+
+Name: com/xebialabs/deployit/plugin/apache/httpd/ci/ApacheHttpdServer.class
+ConfigurationItem: true
+
+Name: com/xebialabs/deployit/plugin/apache/httpd/ci/ApacheModule.class
+ConfigurationItem: true
+
+
