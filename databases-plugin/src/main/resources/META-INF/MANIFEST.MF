@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+
+Name: com/xebialabs/deployit/plugin/sql/ci/OracleDatabase.class
+ConfigurationItem: true
+
+Name: com/xebialabs/deployit/plugin/sql/ci/MySqlDatabase.class
+ConfigurationItem: true
+
+Name: com/xebialabs/deployit/plugin/sql/ci/MSSQLDatabase.class
+ConfigurationItem: true
+
+Name: com/xebialabs/deployit/plugin/sql/runbook/SqlFolderRunbook.class
+Runbook: false
+
