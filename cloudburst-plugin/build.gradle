@@ -9,7 +9,7 @@ dependencies {
 	compile 'com.xebialabs.deployit.plugins:was-plugin:3.0.2-cloudburst-1'
 	compile 'com.xebialabs.deployit.plugins:apache-httpd-plugin:3.0.1'
 	compile deps.spring_core
-	compile deps.google_collections
+	compile deps.guava
 	compile deps.commons_lang, deps.commons_io, deps.commons_collections
 	testCompile 'com.xebialabs.deployit:core:3.0.2'
 	testCompile 'com.xebialabs.deployit:test-support:3.0.4'
