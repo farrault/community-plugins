@@ -1,0 +1,13 @@
+.classpath
+.project
+.pydevproject
+.settings/
+.gradle/
+bin/
+build/
+derby.log
+recovery.dat
+importablePackages
+conf/
+repository/
+work/

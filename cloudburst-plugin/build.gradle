@@ -1,0 +1,19 @@
+apply from: 'https://github.com/xebialabs/deployit-common-build/raw/master/repositories.gradle'
+apply from: 'https://github.com/xebialabs/deployit-common-build/raw/master/plugin-build.gradle'
+
+version = '1.0'
+
+dependencies {
+	compile 'com.xebialabs.deployit:plugin-api:3.0.3'
+	compile 'com.xebialabs.deployit:server-core:3.0.2'
+	compile 'com.xebialabs.deployit.plugins:was-plugin:3.0.2-cloudburst-1'
+	compile 'com.xebialabs.deployit.plugins:apache-httpd-plugin:3.0.1'
+	compile deps.spring_core
+	compile deps.google_collections
+	compile deps.commons_lang, deps.commons_io, deps.commons_collections
+	testCompile 'com.xebialabs.deployit:core:3.0.2'
+	testCompile 'com.xebialabs.deployit:test-support:3.0.4'
+}
+
+apply from: 'https://github.com/xebialabs/deployit-common-build/raw/master/plugin-documentation.gradle'
+

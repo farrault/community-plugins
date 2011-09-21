@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+
+Name: com/xebialabs/deployit/plugin/cloudburst/CloudBurstApplianceRunBook.class
+RunBook: true
+
+Name: com/xebialabs/deployit/plugin/cloudburst/CloudBurstAppliance.class
+ConfigurationItem: true
+
+Name: com/xebialabs/deployit/plugin/cloudburst/EarToCloudBurstApplianceMapping.class
+ConfigurationItem: true
+
