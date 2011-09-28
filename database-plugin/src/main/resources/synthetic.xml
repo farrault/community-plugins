@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<synthetic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns="http://www.xebialabs.com/deployit/synthetic"
+           xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd">
+    
+    <type type="sql.RollbackSqlScript" extends="generic.File" />
+    
+    <type type="sql.SqlScript" extends="sql.RollbackSqlScript">
+        <property name="order" kind="integer" default="1" description="The order in which this SQL script is to be executed relative to other scripts deployed as part of the same deployment. Lower numbers will be executed first. The sequence of SQL scripts with the same order is arbitrary" />
+        <property name="rollbackScript" kind="ci" referenced-type="sql.RollbackSqlScript" required="false" description="If set, the SQL script to be executed when this script is undeployed" />
+    </type>
+    
+    <type-modification type="sql.ExecutedSqlScript">
+        <property name="schema" required="false" description="If set, the schema to use. Falls back to the optional default schema set on the sql.SqlClient container" />
+        <property name="username" required="false" description="If set, the user name to use. Falls back to the optional default user name set on the sql.SqlClient container" />
+        <property name="password" password="true" required="false" description="If set, the password to use. Falls back to the optional default password set on the sql.SqlClient container" />
+        
+        <!-- admin properties -->
+        <property name="createScript" hidden="true" default="${deployed.container.runSqlScript}" />
+        <property name="createVerb" hidden="true" default="Run" />
+        <property name="destroyScript" hidden="true" default="${deployed.container.runSqlScript}" />
+        <property name="destroyVerb" hidden="true" default="Rollback" />
+    </type-modification>
+    
+    <!-- workaround for http://tech.xebialabs.com/jira/browse/DEPLOYITPB-2236 -->
+    <type type="sql.ExecutedSqlScript2" extends="sql.ExecutedSqlScript"
+        deployable-type="sql.SqlScript" container-type="sql.SqlClient" />
+    
+    <type-modification type="sql.SqlClient">
+        <property name="command" description="The executable and arguments to be run. Use ${deployed.container.myProp} to refer to property 'myProp' of the SQL client, and ${deployed.myPropOrDefault} to refer to property 'myProp' of the SQL script to be run. The path to the actual SQL script to run will be appended after the command, separated by a space. See sql.OracleClient or sql.MySqlClient for examples" />
+        <property name="defaultSchema" required="false" description="If set, the schema to use if none is set on the deployed sql.ExecutedSqlScript" />
+        <property name="defaultUsername" required="false" description="If set, the user name to use if none is set on the deployed sql.ExecutedSqlScript" />
+        <property name="defaultPassword" password="true" required="false" description="If set, the password to use if none is set on the deployed sql.ExecutedSqlScript" />
+        <property name="workingDirectory" required="false" description="If set, the SQL scripts will be copied to this directory and the command to call the SQL executed from there. The directory is presumed to exist" />
+        
+        <!-- admin properties -->
+        <property name="runSqlScript" hidden="true" default="sql/SqlClient" description="The OS-specific wrapper script that calls the SQL client" />
+    </type-modification>
+    
+    <type type="sql.OracleClient" extends="sql.SqlClient" description="An Oracle SQL*Plus client">
+        <!-- unhide and edit per instance if there is substantial variation across your install base; 
+          sub-types with overridden values are preferred if there is a manageable number -->
+        <property name="command" hidden="true" default="${deployed.container.oraHome}/bin/sqlplus ${deployed.usernameOrDefault}/${deployed.passwordOrDefault}@${deployed.schemaOrDefault} @" description="The executable and arguments to be run. Use ${deployed.container.myProp} to refer to property 'myProp' of the SQL client, and ${deployed.myPropOrDefault} to refer to property 'myProp' of the SQL script to be run. The path to the actual SQL script to run will be appended directly after the command, without spaces" />
+        <property name="oraHome" description="The home directory for SQL*Plus" />
+        
+        <!-- override -->
+        <property name="runSqlScript" hidden="true" default="sql/OracleClient" />
+    </type>
+    
+    <type type="sql.MySqlClient" extends="sql.SqlClient" description="A MySQL client">
+        <!-- unhide and edit per instance if there is substantial variation across your install base; 
+          sub-types with overridden values are preferred if there is a manageable number -->
+        <property name="command" default="${deployed.container.mySqlHome}/bin/mysql --user=${deployed.usernameOrDefault} --password=${deployed.passwordOrDefault} ${deployed.schemaOrDefault} &lt;" description="The executable and arguments to be run. Use ${deployed.container.myProp} to refer to property 'myProp' of the SQL client, and ${deployed.myPropOrDefault} to refer to property 'myProp' of the SQL script to be run. The path to the actual SQL script to run will be appended directly after the command, without spaces" />
+        <property name="mySqlHome" description="The home directory for MySQL" />
+    </type>
+    
+    <type type="sql.Db2Client" extends="sql.SqlClient" description="An IBM DB2 client">
+        <!-- unhide and edit per instance if there is substantial variation across your install base; 
+          sub-types with overridden values are preferred if there is a manageable number -->
+        <property name="command" default="${deployed.container.db2Home}/bin/db2 -tvf" description="The executable and arguments to be run. Use ${deployed.container.myProp} to refer to property 'myProp' of the SQL client, and ${deployed.myPropOrDefault} to refer to property 'myProp' of the SQL script to be run. The path to the actual SQL script to run will be appended directly after the command, without spaces" />
+        <property name="db2Home" description="The home directory for DB2" />
+        
+        <!-- DB2 uses OS-level usernames and passwords and does not support a schema command line argument -->
+        <property name="defaultSchema" hidden="true" required="false" />
+        <property name="defaultUsername" hidden="true" required="false" />
+        <property name="defaultPassword" hidden="true" password="true" required="false" />
+    </type>
+</synthetic>
