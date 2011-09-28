@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<synthetic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns="http://www.xebialabs.com/deployit/synthetic"
+           xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd">
+    
+    <type type="chg.ChangeRequest" extends="generic.Resource" />
+    
+    <type-modification type="chg.ChangeTicket">
+        <property name="requestId" description="The ID or number of the change request" />
+        
+        <!-- admin properties -->
+        <property name="createScript" hidden="true" default="chg/check-for-request" />
+        <property name="destroyScript" hidden="true" default="UNUSED" />
+        <property name="createVerb" hidden="true" default="Verify" />
+        <!-- DefaultOrders.PRE_FLIGHT -->
+        <property name="createOrder" kind="integer" hidden="true" default="0" />
+    </type-modification>
+    
+    <!-- workaround for http://tech.xebialabs.com/jira/browse/DEPLOYITPB-2236 -->
+    <type type="chg.ChangeTicket2" extends="chg.ChangeTicket"
+        deployable-type="chg.ChangeRequest" container-type="chg.ChangeManager" />
+    
+    <type type="chg.ChangeManager" extends="generic.Container" description="A Change Management system">
+        <!-- The name of the auto-generated release condition to use for change ticket validation.
+          Should not match the name of any visible release condition administered by users -->
+        <property name="changeTicketReleaseConditionName" default="requiresChangeTicket" />
+    </type>
+</synthetic>
