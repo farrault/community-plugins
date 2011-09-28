@@ -1,0 +1,43 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'com.xebialabs.deployit.hotfix'
+version = '1.0'
+
+sourceCompatibility = 1.6
+sourceEncoding = 'UTF-8'
+
+dependencies {
+  compile "com.xebialabs.deployit.plugins:generic-plugin:3.1-alpha-56-SNAPSHOT"
+}
+
+repositories {
+	mavenLocal()
+}
+
+task generatePom << {
+  pom {
+    project { 
+      build { 
+        plugins {
+          plugin {
+            artifactId 'maven-compiler-plugin'
+            version '2.3'
+            configuration {
+              encoding = sourceEncoding 
+              source = "${sourceCompatibility}".toString()
+              target = "${sourceCompatibility}".toString()
+            }
+          }
+          plugin {
+            artifactId 'maven-resources-plugin'
+            version '2.3'
+            configuration {
+              encoding = sourceEncoding
+            }
+          }
+        }
+      }
+    }
+  }.writeTo('pom.xml')
+}
