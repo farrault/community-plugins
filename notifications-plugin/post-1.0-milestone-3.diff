@@ -1,0 +1,13 @@
+diff --git a/build.gradle b/build.gradle
+index 0935aed..9482388 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -26,7 +26,7 @@ repositories {
+ }
+ 
+ afterEvaluate { eachProject ->
+-  Set testTasks = eachProject.tasks.withType(Test).all
++  Set testTasks = eachProject.tasks.withType(Test)
+   
+   testTasks.each { testTask ->
+     testTask.onlyIf { !project.hasProperty('skipTests') }
