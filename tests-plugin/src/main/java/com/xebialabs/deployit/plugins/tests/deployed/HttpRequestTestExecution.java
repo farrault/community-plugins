@@ -20,39 +20,32 @@
  */
 package com.xebialabs.deployit.plugins.tests.deployed;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.nullToEmpty;
 
 import com.xebialabs.deployit.plugin.api.deployment.planning.DeploymentPlanningContext;
+import com.xebialabs.deployit.plugin.api.deployment.specification.Delta;
+import com.xebialabs.deployit.plugin.api.udm.Deployable;
 import com.xebialabs.deployit.plugin.api.udm.Metadata;
-import com.xebialabs.deployit.plugin.generic.ci.Resource;
+import com.xebialabs.deployit.plugin.generic.deployed.ExecutedScript;
 import com.xebialabs.deployit.plugin.overthere.Host;
-import com.xebialabs.deployit.plugins.generic.ext.deployed.ScriptPropertyResolvingExecutedScript;
-import com.xebialabs.overthere.OperatingSystemFamily;
 
 @SuppressWarnings("serial")
 @Metadata(virtual = true, description = "An HTTP request test")
-public class HttpRequestTestExecution extends ScriptPropertyResolvingExecutedScript<Resource> {
+public class HttpRequestTestExecution extends ExecutedScript<Deployable> {
 
-    @Override
-    public void executeCreate(DeploymentPlanningContext ctx) {
-        // only supporting execution on UNIX hosts at present
-        checkArgument(getContainer().getHost().getOs().equals(OperatingSystemFamily.UNIX),
-                "HTTP request test execution is only supported on UNIX hosts, but host OS family is '%s'",
-                getContainer().getHost().getOs());
-        super.executeCreate(ctx);
-    }
+	@Override
+	public void executeCreate(DeploymentPlanningContext ctx, Delta d) {
+	    super.executeCreate(ctx, d);
+	}
+	
+	@Override
+	public void executeDestroy(DeploymentPlanningContext ctx, Delta d) {
+	    //do nothing
+	}
 
-    @Override
-    public void executeDestroy(DeploymentPlanningContext ctx) {
-        // do nothing - destroy not supported
-    }
-    
-    public String getHostTemporaryDirectoryOrDefault() {
-        Host host = getContainer().getHost();
-        String hostTemporaryDirectory = nullToEmpty(host.getTemporaryDirectoryPath());
-        return (!hostTemporaryDirectory.isEmpty() 
-                ? hostTemporaryDirectory 
-                : host.getOs().getDefaultTemporaryDirectoryPath());
-    }
+	public String getHostTemporaryDirectoryOrDefault() {
+		Host host = getContainer().getHost();
+		String hostTemporaryDirectory = nullToEmpty(host.getTemporaryDirectoryPath());
+		return (!hostTemporaryDirectory.isEmpty() ? hostTemporaryDirectory : host.getOs().getDefaultTemporaryDirectoryPath());
+	}
 }

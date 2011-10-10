@@ -3,14 +3,11 @@
            xmlns="http://www.xebialabs.com/deployit/synthetic"
            xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd">
 
-    <!-- *sigh*...wish we could use generate-deployable -->    
-    <type type="tests.HttpRequestTest" extends="generic.Resource">
-        <property name="url" required="false" description="The URL to test" />
-        <property name="expectedResponseText" size="large" required="false" description="Text that is expected to be contained in the HTTP response body, if the response code is in the 200 range. A non-2xx response code will cause the test to fail irrespective of the response body" />
-        <property name="ignoreCertificateWarnings" required="false" description="If set, certificate warnings when making a connection will be ignored" />
-    </type>
+    <!-- *sigh*...wish we could run directly on a Host -->
+    <type type="tests.TestStation" extends="generic.Container" />
     
-    <type-modification type="tests.HttpRequestTestExecution">
+    <type type="test.HttpRequestTester" extends="tests.HttpRequestTestExecution" container-type="tests.TestStation" deployable-type="test.HttpRequestTesterSpec">
+    	<generate-deployable type="test.HttpRequestTesterSpec" extends="generic.Resource" description="Spec for a http request tester"/>
         <property name="url" description="The URL to test" />
         <property name="expectedResponseText" size="large" description="Text that is expected to be contained in the HTTP response body, if the response code is in the 200 range. A non-2xx response code will cause the test to fail irrespective of the response body" />
         <!-- see http://tech.xebialabs.com/jira/browse/DEPLOYITPB-2253 -->
@@ -18,17 +15,10 @@
       
         <!-- admin properties -->
         <property name="createScript" hidden="true" default="tests/execute-http-request" />
-        <!-- why do I need this??? -->
-        <property name="destroyScript" hidden="true" default="STOP.DOING.THIS.TO.ME!!" />
+        <property name="destroyScript" hidden="true" default="DUMMY_VALUE"/>
         <property name="createVerb" hidden="true" default="Run test" />
         <!-- DefaultOrders.POST_FLIGHT -->
-        <property name="createOrder" kind="integer" hidden="true" default="100" />      
-    </type-modification>
+        <property name="createOrder" kind="integer" hidden="true" default="100" />  
+    </type>
     
-    <!-- workaround for http://tech.xebialabs.com/jira/browse/DEPLOYITPB-2236 -->
-    <type type="tests.HttpRequestTestExecution2" extends="tests.HttpRequestTestExecution" 
-        deployable-type="tests.HttpRequestTest" container-type="tests.TestStation" />
-    
-    <!-- *sigh*...wish we could run directly on a Host -->
-    <type type="tests.TestStation" extends="generic.Container" />
 </synthetic>

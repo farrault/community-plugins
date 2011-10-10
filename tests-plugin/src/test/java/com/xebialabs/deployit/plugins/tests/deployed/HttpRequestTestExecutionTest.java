@@ -20,48 +20,83 @@
  */
 package com.xebialabs.deployit.plugins.tests.deployed;
 
-
 import static com.xebialabs.deployit.test.support.TestUtils.newInstance;
+import static com.xebialabs.overthere.ConnectionOptions.ADDRESS;
+import static com.xebialabs.overthere.ConnectionOptions.PASSWORD;
+import static com.xebialabs.overthere.ConnectionOptions.USERNAME;
+import static com.xebialabs.overthere.cifs.CifsConnectionType.TELNET;
+import static com.xebialabs.overthere.ssh.SshConnectionBuilder.CONNECTION_TYPE;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.List;
+
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.xebialabs.deployit.deployment.planner.DeltaSpecificationBuilder;
 import com.xebialabs.deployit.plugin.api.boot.PluginBooter;
+import com.xebialabs.deployit.plugin.api.deployment.execution.DeploymentStep;
+import com.xebialabs.deployit.plugin.api.deployment.execution.Plan;
+import com.xebialabs.deployit.plugin.api.deployment.specification.DeltaSpecification;
+import com.xebialabs.deployit.plugin.api.udm.Deployable;
+import com.xebialabs.deployit.plugin.api.udm.Deployed;
+import com.xebialabs.deployit.plugin.api.udm.DeploymentPackage;
 import com.xebialabs.deployit.plugin.generic.ci.Container;
+import com.xebialabs.deployit.plugin.generic.ci.Resource;
 import com.xebialabs.deployit.plugin.overthere.Host;
 import com.xebialabs.deployit.plugins.tests.TestBase;
+import com.xebialabs.deployit.test.deployment.DeployitTester;
+import com.xebialabs.overthere.OperatingSystemFamily;
 
 /**
  * Unit tests for the {@link HttpRequestTestExecution}
  */
 public class HttpRequestTestExecutionTest extends TestBase {
+	Container container;
 
-    @BeforeClass
-    public static void boot() {
-        PluginBooter.bootWithoutGlobalContext();
-    }
+	@BeforeClass
+	public static void boot() {
+		PluginBooter.bootWithoutGlobalContext();
+		tester = DeployitTester.build();
+	}
 
-    @Test
-    public void doesNothingOnDestroy() {
-        StubPlanningContext capturingContext = new StubPlanningContext();
-        HttpRequestTestExecution test = newInstance("tests.HttpRequestTestExecution2");
-        test.executeDestroy(capturingContext);
-        assertThat(capturingContext.steps.size(), is(0));
-    }
-    
-    @Test(expected = IllegalArgumentException.class)
-    public void requiresUnixOsFamily() {
-        StubPlanningContext capturingContext = new StubPlanningContext();
-        HttpRequestTestExecution test = newInstance("tests.HttpRequestTestExecution2");
-        test.setContainer(newTestStation(newCifsHost()));
-        test.executeCreate(capturingContext);
-    }
-    
-    private static Container newTestStation(Host host) {
-        Container testStation = newInstance("tests.TestStation");
-        testStation.setHost(host);
-        return testStation;
-    }
+	protected static DeployitTester tester;
+
+	@Before
+	public void setup() {
+		Host host = newInstance("overthere.CifsHost");
+		host.setId("Infrastructure/overthere");
+		host.setOs(OperatingSystemFamily.WINDOWS);
+		host.putSyntheticProperty(CONNECTION_TYPE, TELNET);
+		host.putSyntheticProperty(ADDRESS, "overthere");
+		host.putSyntheticProperty(USERNAME, "overthere");
+		host.putSyntheticProperty(PASSWORD, "overhere");
+		
+		container = newInstance("tests.TestStation");
+		container.setId("Infrastructure/testContainer");
+		container.setHost(host);
+		
+		environment = createEnvironment(container);
+	}
+
+	@Test
+	public void testerAddStepForTesting() {
+		Resource testerSpec = newInstance("test.HttpRequestTesterSpec");
+		testerSpec.putSyntheticProperty("url", "http://localhost:8080/petclinic");
+		testerSpec.putSyntheticProperty("expectedResponseText", "petclinic");
+
+		DeploymentPackage package1_0 = createDeploymentPackage("1.0", testerSpec);
+
+		Deployed<Deployable, Container> httpTester = newInstance("test.HttpRequestTester");
+		httpTester.setContainer(container);
+		httpTester.setDeployable(testerSpec);
+		
+		DeltaSpecification spec = new DeltaSpecificationBuilder().initial(package1_0, environment).create(httpTester).build();
+		Plan resolvedPlan = tester.resolvePlan(spec);
+		List<DeploymentStep> resolvedSteps = resolvedPlan.getSteps();
+
+		assertThat(resolvedSteps.size(), is(1));
+	}
 }
