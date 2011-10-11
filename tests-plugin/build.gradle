@@ -23,7 +23,7 @@ repositories {
 }
 
 afterEvaluate { eachProject ->
-  Set testTasks = eachProject.tasks.withType(Test)
+  Set testTasks = eachProject.tasks.withType(Test).all
   
   testTasks.each { testTask ->
     testTask.onlyIf { !project.hasProperty('skipTests') }
