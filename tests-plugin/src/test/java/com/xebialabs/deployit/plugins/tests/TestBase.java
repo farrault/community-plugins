@@ -34,8 +34,6 @@ import com.xebialabs.overthere.OperatingSystemFamily;
 
 public abstract class TestBase {
 
-	public Environment environment;
-	
     @BeforeClass
     public static void boot() {
         PluginBooter.bootWithoutGlobalContext();

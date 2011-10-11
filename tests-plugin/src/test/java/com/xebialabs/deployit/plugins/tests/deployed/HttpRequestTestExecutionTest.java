@@ -27,6 +27,7 @@ import static com.xebialabs.overthere.ConnectionOptions.USERNAME;
 import static com.xebialabs.overthere.cifs.CifsConnectionType.TELNET;
 import static com.xebialabs.overthere.ssh.SshConnectionBuilder.CONNECTION_TYPE;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
@@ -41,20 +42,25 @@ import com.xebialabs.deployit.plugin.api.deployment.execution.DeploymentStep;
 import com.xebialabs.deployit.plugin.api.deployment.execution.Plan;
 import com.xebialabs.deployit.plugin.api.deployment.specification.DeltaSpecification;
 import com.xebialabs.deployit.plugin.api.udm.Deployable;
-import com.xebialabs.deployit.plugin.api.udm.Deployed;
 import com.xebialabs.deployit.plugin.api.udm.DeploymentPackage;
+import com.xebialabs.deployit.plugin.api.udm.Environment;
 import com.xebialabs.deployit.plugin.generic.ci.Container;
 import com.xebialabs.deployit.plugin.generic.ci.Resource;
+import com.xebialabs.deployit.plugin.generic.deployed.ExecutedScript;
 import com.xebialabs.deployit.plugin.overthere.Host;
 import com.xebialabs.deployit.plugins.tests.TestBase;
+import com.xebialabs.deployit.plugins.tests.step.LocalHttpTesterStep;
+import com.xebialabs.deployit.plugins.tests.step.RemoteHttpTesterStep;
 import com.xebialabs.deployit.test.deployment.DeployitTester;
 import com.xebialabs.overthere.OperatingSystemFamily;
 
 /**
- * Unit tests for the {@link HttpRequestTestExecution}
+ * Unit tests for the {@link BaseHttpRequestTester}
  */
 public class HttpRequestTestExecutionTest extends TestBase {
-	Container container;
+	Host remoteHost, localhost;
+	Container remoteTestStation, localTestStation;
+	boolean executeSteps = false;
 
 	@BeforeClass
 	public static void boot() {
@@ -66,37 +72,69 @@ public class HttpRequestTestExecutionTest extends TestBase {
 
 	@Before
 	public void setup() {
-		Host host = newInstance("overthere.CifsHost");
-		host.setId("Infrastructure/overthere");
-		host.setOs(OperatingSystemFamily.WINDOWS);
-		host.putSyntheticProperty(CONNECTION_TYPE, TELNET);
-		host.putSyntheticProperty(ADDRESS, "overthere");
-		host.putSyntheticProperty(USERNAME, "overthere");
-		host.putSyntheticProperty(PASSWORD, "overhere");
-		
-		container = newInstance("tests.TestStation");
-		container.setId("Infrastructure/testContainer");
-		container.setHost(host);
-		
-		environment = createEnvironment(container);
+		remoteHost = newInstance("overthere.CifsHost");
+		remoteHost.setId("Infrastructure/wls-11g-win");
+		remoteHost.setOs(OperatingSystemFamily.WINDOWS);
+		remoteHost.putSyntheticProperty(CONNECTION_TYPE, TELNET);
+		remoteHost.putSyntheticProperty(ADDRESS, "wls-11g-win");
+		remoteHost.putSyntheticProperty(USERNAME, "Administrator");
+		remoteHost.putSyntheticProperty(PASSWORD, "xebialabs");
+
+		localhost = newInstance("overthere.LocalHost");
+		localhost.setId("Infrastructure/localhost");
+		localhost.setOs(OperatingSystemFamily.UNIX);
+
+		remoteTestStation = newInstance("tests.TestStation");
+		remoteTestStation.setId("Infrastructure/wls-11g-win/remoteTestStation");
+		remoteTestStation.setHost(remoteHost);
+
+		localTestStation = newInstance("tests.TestStation");
+		localTestStation.setId("Infrastructure/localhost/localTestStation");
+		localTestStation.setHost(localhost);
+
 	}
 
 	@Test
-	public void testerAddStepForTesting() {
-		Resource testerSpec = newInstance("test.HttpRequestTesterSpec");
-		testerSpec.putSyntheticProperty("url", "http://localhost:8080/petclinic");
-		testerSpec.putSyntheticProperty("expectedResponseText", "petclinic");
+	public void addScriptExecutionStepForRemoteContainer() {
+		Environment environment = createEnvironment(remoteTestStation);
+
+		Resource testerSpec = newInstance("tests.HttpRequestTest");
+		testerSpec.putSyntheticProperty("url", "http://jboss-51:8080/petclinic");
+		testerSpec.putSyntheticProperty("expectedResponseText", "Spring Framework demonstration");
 
 		DeploymentPackage package1_0 = createDeploymentPackage("1.0", testerSpec);
 
-		Deployed<Deployable, Container> httpTester = newInstance("test.HttpRequestTester");
-		httpTester.setContainer(container);
+		ExecutedScript<Deployable> httpTester = newInstance("tests.HttpRequestTester");
+		httpTester.setContainer(remoteTestStation);
 		httpTester.setDeployable(testerSpec);
-		
+
 		DeltaSpecification spec = new DeltaSpecificationBuilder().initial(package1_0, environment).create(httpTester).build();
 		Plan resolvedPlan = tester.resolvePlan(spec);
 		List<DeploymentStep> resolvedSteps = resolvedPlan.getSteps();
 
 		assertThat(resolvedSteps.size(), is(1));
+		assertThat(resolvedSteps.get(0), instanceOf(RemoteHttpTesterStep.class));
+	}
+
+	@Test
+	public void addGenericBaseStepForLocalHostContainerType() {
+		Environment environment = createEnvironment(localTestStation);
+
+		Resource testerSpec = newInstance("tests.HttpRequestTest");
+		testerSpec.putSyntheticProperty("url", "http://localhost:8080/petclinic");
+		testerSpec.putSyntheticProperty("expectedResponseText", "petclinic");
+
+		DeploymentPackage package1_0 = createDeploymentPackage("1.0", testerSpec);
+
+		ExecutedScript<Deployable> httpTester = newInstance("tests.HttpRequestTester");
+		httpTester.setContainer(localTestStation);
+		httpTester.setDeployable(testerSpec);
+
+		DeltaSpecification spec = new DeltaSpecificationBuilder().initial(package1_0, environment).create(httpTester).build();
+		Plan resolvedPlan = tester.resolvePlan(spec);
+		List<DeploymentStep> resolvedSteps = resolvedPlan.getSteps();
+
+		assertThat(resolvedSteps.size(), is(1));
+		assertThat(resolvedSteps.get(0), instanceOf(LocalHttpTesterStep.class));
 	}
 }
