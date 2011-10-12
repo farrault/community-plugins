@@ -5,22 +5,22 @@ apply from: "$commonBuildPath/plugin-build.gradle"
 version = '3.6.0-SNAPSHOT'
 apiVersion = '3.6.0-beta-4-SNAPSHOT'
 
-configurations {
- docgen
-}
+//configurations {
+//	docgen
+//}
 
+//docgen=[:]
 
-docgen=[:]
+//apply from: "$commonBuildPath/documentation.gradle"
+//documentationZip.dependsOn << 'classes'
 
-apply from: "$commonBuildPath/documentation.gradle"
-documentationZip.dependsOn << 'classes'
 dependencies {
         compile deps.overthere
 	compile "com.xebialabs.deployit:udm-plugin-api:$apiVersion"
 	compile "com.xebialabs.deployit.plugins:overthere-plugin:$apiVersion"
 	compile "com.xebialabs.deployit.plugins:jee-plugin:$apiVersion"
 	compile "com.xebialabs.deployit.plugins:generic-plugin:$apiVersion"
-    compile deps.guava
+	compile deps.guava
 	compile deps.overthere
 	runtime "com.xebialabs.deployit:doc-generator:${apiVersion}"		
 	testCompile "com.xebialabs.deployit:udm-test-support:$apiVersion"
