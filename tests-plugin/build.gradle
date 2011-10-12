@@ -1,4 +1,10 @@
 commonBuildPath = hasProperty("localCommonBuildRepo") ? file(localCommonBuildRepo).toURL().toString() : 'https://github.com/xebialabs/deployit-common-build/raw/master'
+apply from: 'https://github.com/xebialabs/deployit-common-build/raw/master/repositories.gradle'
+apply from: 'https://github.com/xebialabs/deployit-common-build/raw/master/plugin-build.gradle'
+
+repositories {
+	org.apache.ivy.util.url.CredentialsStore.INSTANCE.addCredentials("Sonatype Nexus Repository Manager", nexusHost, nexusUserName, nexusPassword);
+}
 
 apply plugin: 'java'
 apply plugin: 'maven'
@@ -21,18 +27,18 @@ apply from: "$commonBuildPath/documentation.gradle"
 documentationZip.dependsOn << 'classes'
 
 dependencies {
+  compile deps.overthere
+  compile "com.xebialabs.deployit:udm-plugin-api:$apiVersion"
   compile "com.xebialabs.deployit.plugins:generic-plugin:$apiVersion"
-  compile 'commons-httpclient:commons-httpclient:3.1'
+  compile "com.xebialabs.deployit.plugins:overthere-plugin:$apiVersion"
+  compile deps.commons_httpclient
+  compile deps.guava
   compile 'org.freemarker:freemarker:2.3.18'
     
   runtime "com.xebialabs.deployit:doc-generator:$apiVersion"
   testCompile 'junit:junit:4.8.2'
   testCompile 'com.xebialabs.deployit:udm-test-support:3.5.0'
   testCompile 'ch.qos.logback:logback-classic:0.9.24'
-}
-
-repositories {
-	mavenLocal()
 }
 
 afterEvaluate { eachProject ->
