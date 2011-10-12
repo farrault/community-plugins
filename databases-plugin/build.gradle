@@ -5,14 +5,14 @@ apply from: "$commonBuildPath/plugin-build.gradle"
 version = '3.6.0-SNAPSHOT'
 apiVersion = '3.6.0-beta-6'
 
-//configurations {
-//	docgen
-//}
+configurations {
+	docgen
+}
 
-//docgen=[:]
-
-//apply from: "$commonBuildPath/documentation.gradle"
-//documentationZip.dependsOn << 'classes'
+docgen=[:]
+docgen.databasePluginManual = [title: 'Database Plugin Manual', appendCiReference: true, prefixes: 'sql']
+apply from: "$commonBuildPath/documentation.gradle"
+documentationZip.dependsOn << 'classes'
 
 dependencies {
         compile deps.overthere

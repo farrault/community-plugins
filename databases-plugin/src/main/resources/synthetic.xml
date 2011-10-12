@@ -3,10 +3,10 @@
            xmlns="http://www.xebialabs.com/deployit/synthetic"
            xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd">
 
-    <type type="sql.SqlScripts" extends="generic.Folder">
+    <type type="sql.SqlScripts" extends="generic.Folder" description="Folder containing SQL scripts">
     </type>
 
-    <type type="sql.ExecutedSqlScripts" extends="generic.ExecutedFolder" deployable-type="sql.SqlScripts" container-type="sql.SqlClient">
+    <type type="sql.ExecutedSqlScripts" extends="generic.ExecutedFolder" deployable-type="sql.SqlScripts" container-type="sql.SqlClient" description="SQL scripts executed on an SQL client">
         <property name="schema" required="false" description="If set, the schema to use. Falls back to the optional default schema set on the sql.SqlClient container" />
         <property name="username" required="false" description="If set, the user name to use. Falls back to the optional default user name set on the sql.SqlClient container" />
         <property name="password" password="true" required="false" description="If set, the password to use. Falls back to the optional default password set on the sql.SqlClient container" />
@@ -18,24 +18,24 @@
         <property name="rollbackScriptPostfix" hidden="true" default="-rollback.sql" />
     </type>
 
-     <type type="sql.SqlClient" extends="generic.Container" description="A generic SQL client">
+     <type type="sql.SqlClient" extends="generic.Container" description="Generic SQL client">
        <property name="schema" required="false" description="If set, the schema to use if none is set on the deployed sql.ExecutedSqlScripts"/>
        <property name="username" required="false" description="If set, the user name to use if none is set on the deployed sql.ExecutedSqlScripts"/>
        <property name="password" password="true"  required="false" description="If set, the password to use if none is set on the deployed sql.ExecutedSqlScripts"/>
        <property name="clientWrapperScript" required="false" description="The OS-specific wrapper script that calls the SQL client"/>
     </type>
 
-    <type type="sql.OracleClient" extends="sql.SqlClient" description="An Oracle SQL*Plus client">
+    <type type="sql.OracleClient" extends="sql.SqlClient" description="Oracle SQL*Plus client">
         <property name="oraHome" description="The home directory for SQL*Plus" />
         <property name="clientWrapperScript" hidden="true" default="sql/OracleClient" />
     </type>
 
-    <type type="sql.MySqlClient" extends="sql.SqlClient" description="A MySQL client">
+    <type type="sql.MySqlClient" extends="sql.SqlClient" description="MySQL client">
         <property name="mySqlHome" description="The home directory for MySQL" />
         <property name="clientWrapperScript" hidden="true" default="sql/MySqlClient" />
     </type>
 
-    <type type="sql.Db2Client" extends="sql.SqlClient" description="An IBM DB2 client">
+    <type type="sql.Db2Client" extends="sql.SqlClient" description="IBM DB2 client">
         <property name="db2Home" description="The home directory for DB2" />
         <property name="clientWrapperScript" hidden="true" default="sql/Db2Client" />
 
