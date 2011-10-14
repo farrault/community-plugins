@@ -39,13 +39,14 @@ SQL scripts are ordered alphabetically based on their filename. This is an examp
 
 Note that in this example, the tenth script, _10-drop-user-index.sql_ would be incorrectly executed after the first script.
 
-When upgrading a SqlScripts CI, only those scripts that were not present (and executed) in the previous deployment are executed.
+When upgrading a SqlScripts CI, only those scripts that were not present in the previous package version are executed. For example, if the previous SqlScripts folder contained script1.sql and script2.sql, and the 
+new version of SqlScripts folder contains script2.sql and script3.sql, then only script3.sql will be executed as part of the upgrade. 
 
 When undeploying a SqlScripts CI, all rollback scripts are executed in reverse alphabetical order.
 
 ## SQL Client ##
 
-The [SqlClient](#sql.SqlClient) CIs are containers to which [SqlScripts](#sql.SqlScripts) can be deployed. There are three flavors:
+The [SqlClient](#sql.SqlClient) CIs are containers to which [SqlScripts](#sql.SqlScripts) can be deployed. The plugin ships with SqlClient for the following databases:
 
 * MySQL
 * Oracle
@@ -85,7 +86,7 @@ The following table describes which deployable/container combinations are possib
 </tr>
 <tr>
 	<td>sql.SqlScripts</td>
-	<td>sql.OracleClient, sql.MySqlClient, sql.Db2Client</td>
+	<td>sql.OracleClient,<br/>sql.MySqlClient, <br/>sql.Db2Client</td>
 	<td>sql.ExecutedSqlScripts</td>
 </tr>
 </table>

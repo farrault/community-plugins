@@ -18,7 +18,7 @@
         <property name="rollbackScriptPostfix" hidden="true" default="-rollback.sql" />
     </type>
 
-     <type type="sql.SqlClient" extends="generic.Container" description="Generic SQL client">
+     <type type="sql.SqlClient" extends="generic.Container" description="Generic SQL client" virtual="true">
        <property name="schema" required="false" description="If set, the schema to use if none is set on the deployed sql.ExecutedSqlScripts"/>
        <property name="username" required="false" description="If set, the user name to use if none is set on the deployed sql.ExecutedSqlScripts"/>
        <property name="password" password="true"  required="false" description="If set, the password to use if none is set on the deployed sql.ExecutedSqlScripts"/>

@@ -1,21 +1,11 @@
 package com.xebialabs.deployit.plugins.database;
 
-import com.google.common.io.CharStreams;
-import com.google.common.io.OutputSupplier;
-import com.xebialabs.deployit.plugin.api.boot.PluginBooter;
-import com.xebialabs.deployit.plugin.generic.ci.Container;
-import com.xebialabs.deployit.plugin.overthere.Host;
-import com.xebialabs.deployit.test.deployment.DeployitTester;
-import com.xebialabs.itest.ItestHost;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-
+import static com.google.common.io.Resources.getResource;
+import static com.google.common.io.Resources.newReaderSupplier;
+import static com.xebialabs.deployit.plugins.database.util.DatabaseItestSupport.findNumberOfRowsInTable;
+import static com.xebialabs.deployit.test.support.TestUtils.createDeploymentPackage;
+import static com.xebialabs.deployit.test.support.TestUtils.createEnvironment;
+import static com.xebialabs.deployit.test.support.TestUtils.id;
 import static com.xebialabs.deployit.test.support.TestUtils.newInstance;
 import static com.xebialabs.itest.ItestHostFactory.getItestHost;
 import static com.xebialabs.overthere.ConnectionOptions.ADDRESS;
@@ -23,80 +13,192 @@ import static com.xebialabs.overthere.ConnectionOptions.USERNAME;
 import static com.xebialabs.overthere.OperatingSystemFamily.UNIX;
 import static com.xebialabs.overthere.ssh.SshConnectionBuilder.CONNECTION_TYPE;
 import static com.xebialabs.overthere.ssh.SshConnectionType.SFTP;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.List;
+
+import junit.framework.Assert;
+
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import com.google.common.io.CharStreams;
+import com.google.common.io.OutputSupplier;
+import com.xebialabs.deployit.deployment.planner.DeltaSpecificationBuilder;
+import com.xebialabs.deployit.plugin.api.boot.PluginBooter;
+import com.xebialabs.deployit.plugin.api.deployment.execution.DeploymentStep;
+import com.xebialabs.deployit.plugin.api.deployment.execution.Plan;
+import com.xebialabs.deployit.plugin.api.deployment.specification.DeltaSpecification;
+import com.xebialabs.deployit.plugin.api.execution.Step;
+import com.xebialabs.deployit.plugin.api.reflect.Type;
+import com.xebialabs.deployit.plugin.api.udm.Deployable;
+import com.xebialabs.deployit.plugin.api.udm.Deployed;
+import com.xebialabs.deployit.plugin.api.udm.DeployedApplication;
+import com.xebialabs.deployit.plugin.api.udm.DeploymentPackage;
+import com.xebialabs.deployit.plugin.api.udm.Environment;
+import com.xebialabs.deployit.plugin.api.udm.Version;
+import com.xebialabs.deployit.plugin.api.udm.artifact.SourceArtifact;
+import com.xebialabs.deployit.plugin.generic.ci.Container;
+import com.xebialabs.deployit.plugin.generic.ci.Folder;
+import com.xebialabs.deployit.plugin.generic.deployed.ExecutedFolder;
+import com.xebialabs.deployit.plugin.overthere.Host;
+import com.xebialabs.deployit.plugins.database.util.SqlQueryRunner;
+import com.xebialabs.deployit.test.deployment.DeployitTester;
+import com.xebialabs.deployit.test.support.LoggingDeploymentExecutionContext;
+import com.xebialabs.itest.ItestHost;
+import com.xebialabs.overthere.RuntimeIOException;
+import com.xebialabs.overthere.local.LocalFile;
+
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class OracleSqlClientItest {
 
-    protected static ItestHost ec2host;
-    protected static DeployitTester tester;
+	@Rule
+	public TemporaryFolder folder = new TemporaryFolder();
 
-    protected Host host;
-    protected Container container;
+	protected static LoggingDeploymentExecutionContext context;
 
+	protected static ItestHost ec2host;
+	protected static DeployitTester tester;
 
-    @BeforeClass
-    public static void setupEc2Host() {
-        PluginBooter.bootWithoutGlobalContext();
-        tester = DeployitTester.build();
+	protected Host host;
+	protected Container container;
+	Environment environment;
 
-        ec2host = getItestHost("ora-unix");
-        ec2host.setup();
-    }
+	@BeforeClass
+	public static void setupEc2Host() {
+		PluginBooter.bootWithoutGlobalContext();
+		tester = DeployitTester.build();
 
-    @AfterClass
-    public static void teardownEc2Host() {
-        ec2host.teardown();
-    }
+		ec2host = getItestHost("ora-unix");
+		ec2host.setup();
+		context = new LoggingDeploymentExecutionContext(OracleSqlClientItest.class);
+	}
 
-    @Before
-    public void setup() throws IOException {
-        host = newInstance("overthere.SshHost");
-        host.setId("Infrastructure/ora-unix");
-        host.setOs(UNIX);
-        host.putSyntheticProperty(CONNECTION_TYPE, SFTP);
-        host.putSyntheticProperty(ADDRESS, ec2host.getHostName());
-        host.putSyntheticProperty(USERNAME, "root");
-        host.putSyntheticProperty("privateKeyFile", createPrivateKeyFile(privateKey).getPath());
+	@AfterClass
+	public static void teardownEc2Host() {
+		ec2host.teardown();
+	}
 
-        container = newInstance("sql.OracleSqlClient");
-        container.setId("/Infrastructure/itestServer");
-        container.setHost(host);
-        container.putSyntheticProperty("oraHome", "/var/www/html");
-    }
+	@Before
+	public void setup() throws IOException {
+		host = newInstance("overthere.SshHost");
+		host.setId("Infrastructure/ora-unix");
+		host.setOs(UNIX);
+		host.setProperty(CONNECTION_TYPE, SFTP);
+		host.setProperty(ADDRESS, ec2host.getHostName());
+		host.setProperty(USERNAME, "ec2-user");
+		host.setProperty("privateKeyFile", createPrivateKeyFile());
 
-    static File createPrivateKeyFile(String privateKey) throws IOException {
-        final File privateKeyFile = File.createTempFile("private", ".key");
-        privateKeyFile.deleteOnExit();
-        CharStreams.write(privateKey, new OutputSupplier<Writer>() {
-            @Override
-            public Writer getOutput() throws IOException {
-                return new FileWriter(privateKeyFile);
-            }
-        });
-        return privateKeyFile;
-    }
+		container = newInstance("sql.OracleClient");
+		container.setId("/Infrastructure/itestServer");
+		container.setHost(host);
+		container.setProperty("oraHome", "/usr/lib/oracle/xe/app/oracle/product/10.2.0/server");
+		container.setProperty("schema", "XE");
+		container.setProperty("username", "SYSTEM");
+		container.setProperty("password", "deployit");
 
-    private static String privateKey = "-----BEGIN RSA PRIVATE KEY-----\r\n"
-            + "MIIEowIBAAKCAQEAiUwHySbCysbvnk8fofMsfjmpaWfBa2je7sh8EtgsJPZsgeFA4KvO0fNVtTaf\r\n"
-            + "kWncvGJ1kOvyPXl9ToifpqTlNyZUJX1KqqTZfBeHvFdCUvIwedWVjJKaOeCwrSWAMGhqWEOH7g2v\r\n"
-            + "8GJzCCYZXQqNTRgdZHTM6P2jhTPiCjR0oI+cI6YMmbg/f7ZNAw9BiCMPWlT9MjVW3obdduVOUwwU\r\n"
-            + "YrgWUweXVP9llIPqWrjmpcSWifBRy3vQpxPI0+uLoLP/bxX96YagGQ4Cd74wr27jTD7ayfi/T/Ee\r\n"
-            + "vGbggaq7zsejFNWmH6ISypEeu+thLwxn6rh1XbeHsg40hYVC7Vyv4wIDAQABAoIBAEh5C7sQbM5h\r\n"
-            + "CGdGWOpB1ICkq1pqXFz4NIVS6rt/xH2WXlyIrJhr2HZWvi0zsjMt8Ei4qFphUbNFh/GGiM+MRzo/\r\n"
-            + "Tzei1WESN4MbYJj4bpgeI5yMM67KTAK1Kk2bd/kVhN0meIAeVXrMXPA2PDkysre5PPqj9O4fxMsx\r\n"
-            + "QeYlHlMJ889IRgOyT5LcZjNTb+U1rXFUy/+kapxYgTOl0kBxLdP/dmPIGHIv8UMDkeLmNINf1z/z\r\n"
-            + "3wOExOz5Gq6A2gtElGWZ0ZQs7yRytRvFQer4QXcHrxOaXfCm0cz2M+cCGDhWPY1LTHS8zwjwQv27\r\n"
-            + "cbiUd6YY/2Z4CzycTZnbjTyDKoECgYEA1TPDyFYdz05MrLnMJ+JfxSUjL8m2TogV2bQAUs4d8N8j\r\n"
-            + "BomT7NGGkXPLO7cqQBMGI0Y/WATjlJOyBtus4Ny0XXvM0e/kMZ8cStUXWU2IA11ARRPyDzu0aNa2\r\n"
-            + "9YYbm/b4j4E2HpeUF9oS12sKLaGC36RtekE9ChxJY8UV2yjgcKECgYEApNuTyT6c+Xi0pAhdnPrt\r\n"
-            + "Op2byr2rKkETkblmYcHpV2jnFPForr6NPgQ9VIgOxBpTkq/X4N8XN7JdsK+YAxuCArLBT79VHry1\r\n"
-            + "kocPtBUHLjPdyWJOIcvydE3Z8bj80JWeZjW9JYYfCCSjyG7zWbzDcaugHZ1VZz8hq7DP+Ao4ngMC\r\n"
-            + "gYBB5IjK/wqhiqKZ86aMYSOWS78PQvlsVhTivwYmkXuheWVa3ORyGePMSoxyfU66lOadulVTf9dS\r\n"
-            + "kT9BbV2F9dBs4BlSfSD60SEuY6Oevx6dY5G8h8iVOq+sg0fypCseTftOZvHyDIkBwi12lKeFqNhJ\r\n"
-            + "BImtckJKQKnSAxSZMo4DYQKBgQCjUsIb6sMbSCE2LO+JWPLzUjeI6NUNPIGFqjaq/LAOn+fnUK8U\r\n"
-            + "B8XoPc0A1PZEA4zuUvU9W+clj7jQFXY1BeiMgcmQFw7eL7h23QWKtBZ0CIBeRd0AEIw3+vTDTDBy\r\n"
-            + "+Pd/bRfhd/mAWMRGCt1d9uttzskG7dsxOVNDRB0VMBMdPwKBgC+Th7KlUecbKmxhuK5iFclW7s4y\r\n"
-            + "l7Sdzalfk/YxDIjBZM1QDbinOBnSSfCn66uwplimhWxWKCS8oSrzPJ9+AYsxHyNP3CMD63j+bqUY\r\n"
-            + "Q5+CG4695FSxGZdu4QQHFhKedfyo6yZIVmK15F/V+ivnqSpoU8buxCCpGafOl8eqnNLO\r\n" + "-----END RSA PRIVATE KEY-----";
+		environment = createEnvironment(container);
+	}
 
+    @Test
+	public void deployUndeploySqlFolder() throws IOException {
+		Folder sqlScriptFolderV1 = createArtifact("sqlScripts", "1.0", "ora_sqlscripts_v1", "sql.SqlScripts", folder.getRoot());
+		DeploymentPackage deploymentPackageV1 = createDeploymentPackage("1.0", sqlScriptFolderV1);
+		ExecutedFolder<Folder> executedSqlScriptsV1 = (ExecutedFolder<Folder>) tester.generateDeployed(sqlScriptFolderV1, container, Type.valueOf("sql.ExecutedSqlScripts"));
+		DeployedApplication appV1 = newDeployedApplication("PetClinic", "1.0", sqlScriptFolderV1);
+		assertDeploy(deploymentPackageV1, environment, executedSqlScriptsV1);
+
+		Folder sqlScriptFolderV2 = createArtifact("sqlScripts", "2.0", "ora_sqlscripts_v2", "sql.SqlScripts", folder.getRoot());
+		DeploymentPackage deploymentPackageV2 = createDeploymentPackage("2.0", sqlScriptFolderV2);
+		ExecutedFolder<Folder> executedSqlScriptsV2 = (ExecutedFolder<Folder>) tester.generateDeployed(sqlScriptFolderV2, container, Type.valueOf("sql.ExecutedSqlScripts"));
+		DeployedApplication appV2 = newDeployedApplication("PetClinic", "2.0", sqlScriptFolderV2);
+		assertUpgrade(deploymentPackageV2, appV1, executedSqlScriptsV1, executedSqlScriptsV2);
+		
+		assertUndeploy(appV2, executedSqlScriptsV2);
+	}
+
+    private void assertDeploy(DeploymentPackage deploymentPackage, Environment environment, Deployed deployed) {
+		assertThat(0, is(findNumberOfRowsInTable("person", SqlQueryRunner.DatabaseType.ORACLE)));
+		assertThat(0, is(findNumberOfRowsInTable("address", SqlQueryRunner.DatabaseType.ORACLE)));
+		
+		DeltaSpecification spec = new DeltaSpecificationBuilder().initial(deploymentPackage, environment).create(deployed).build();
+		Plan resolvedPlan = tester.resolvePlan(spec);
+		List<DeploymentStep> resolvedSteps = resolvedPlan.getSteps();
+		assertThat(3, is(resolvedSteps.size()));
+		Step.Result result = tester.executePlan(resolvedPlan, context);
+		assertThat(result, is(Step.Result.Success));
+		
+		assertThat(3, is(findNumberOfRowsInTable("person", SqlQueryRunner.DatabaseType.ORACLE)));
+		assertThat(3, is(findNumberOfRowsInTable("address", SqlQueryRunner.DatabaseType.ORACLE)));
+	}
+
+	private void assertUpgrade(Version newVersion, DeployedApplication deployedApp, Deployed previousDeployedArtifact, Deployed deployedArtifact) {
+		DeltaSpecification spec = new DeltaSpecificationBuilder().upgrade(newVersion, deployedApp).modify(previousDeployedArtifact, deployedArtifact).build();
+		Plan resolvedPlan = tester.resolvePlan(spec);
+		List<DeploymentStep> resolvedSteps = resolvedPlan.getSteps();
+		Assert.assertTrue(resolvedSteps.size() > 0);
+		Step.Result result = tester.executePlan(resolvedPlan, context);
+		assertThat(result, is(Step.Result.Success));
+		assertThat(4, is(findNumberOfRowsInTable("person", SqlQueryRunner.DatabaseType.ORACLE)));
+		assertThat(3, is(findNumberOfRowsInTable("address", SqlQueryRunner.DatabaseType.ORACLE)));
+	}
+
+	private void assertUndeploy(DeployedApplication deployedApp, Deployed previousDeployedArtifact) {
+		DeltaSpecification spec = new DeltaSpecificationBuilder().undeploy(deployedApp).destroy(previousDeployedArtifact).build();
+		Plan resolvedPlan = tester.resolvePlan(spec);
+		List<DeploymentStep> resolvedSteps = resolvedPlan.getSteps();
+		assertThat(3, is(resolvedSteps.size()));
+		Step.Result result = tester.executePlan(resolvedPlan, context);
+		assertThat(result, is(Step.Result.Success));
+		assertThat(0, is(findNumberOfRowsInTable("person", SqlQueryRunner.DatabaseType.ORACLE)));
+		assertThat(0, is(findNumberOfRowsInTable("address", SqlQueryRunner.DatabaseType.ORACLE)));
+	}
+
+	protected DeployedApplication newDeployedApplication(String name, String version, Deployable... deployables) {
+		DeploymentPackage pkg = createDeploymentPackage(version, deployables);
+		Environment env = createEnvironment(container);
+		DeployedApplication deployedApp = newInstance("udm.DeployedApplication");
+		deployedApp.setVersion(pkg);
+		deployedApp.setEnvironment(env);
+		deployedApp.setId(id(env.getId(), name));
+		return deployedApp;
+	}
+
+	public static <T extends SourceArtifact> Folder createArtifact(String name, String version, String classpathResource, String type, File workingFolder)
+	        throws IOException {
+		Folder folder = newInstance(type);
+		folder.setId("Applications/Test/" + version + "/" + name);
+		URL artifactURL = Thread.currentThread().getContextClassLoader().getResource(classpathResource);
+		folder.setFile(LocalFile.valueOf(new File(artifactURL.getFile())));
+		return folder;
+
+	}
+
+	private static String createPrivateKeyFile() {
+		try {
+			final File privateKeyFile = File.createTempFile("private", ".key");
+			privateKeyFile.deleteOnExit();
+			CharStreams.copy(newReaderSupplier(getResource("xebialabs-itests.pem"), Charset.defaultCharset()), new OutputSupplier<Writer>() {
+				public Writer getOutput() throws IOException {
+					return new FileWriter(privateKeyFile);
+				}
+			});
+			return privateKeyFile.getAbsolutePath();
+
+		} catch (Exception e) {
+			throw new RuntimeIOException("Cannot generate private key file", e);
+		}
+	}
 
 }
