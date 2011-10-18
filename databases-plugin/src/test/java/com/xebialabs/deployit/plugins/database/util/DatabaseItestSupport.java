@@ -3,10 +3,12 @@ package com.xebialabs.deployit.plugins.database.util;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.xebialabs.itest.ItestHost;
+
 public class DatabaseItestSupport {
 
-	public static int findNumberOfRowsInTable(String tableName, SqlQueryRunner.DatabaseType databaseType) {
-		SqlQueryRunner sqlRunner = new SqlQueryRunner(SqlQueryRunner.DatabaseType.ORACLE);
+	public static int findNumberOfRowsInTable(String tableName, ItestHost host, SqlQueryRunner.DatabaseType databaseType) {
+		SqlQueryRunner sqlRunner = new SqlQueryRunner(host, SqlQueryRunner.DatabaseType.ORACLE);
 		return sqlRunner.executeQuery("select count(*) from " + tableName, new ResultSetHandler<Integer>() {
 
 			@Override

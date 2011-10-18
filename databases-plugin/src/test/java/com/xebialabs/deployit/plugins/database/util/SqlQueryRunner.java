@@ -9,10 +9,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import com.xebialabs.itest.ItestHost;
+
 public class SqlQueryRunner {
+	
 	public enum DatabaseType {
 		ORACLE, MYSQL, DB2;
 	}
+	
+	private ItestHost itestHost;
 
 	private static final Properties databaseProperties;
 	private String databaseTypePrefix;
@@ -27,7 +32,8 @@ public class SqlQueryRunner {
 		}
 	}
 
-	public SqlQueryRunner(DatabaseType databaseType) {
+	public SqlQueryRunner(ItestHost itestHost, DatabaseType databaseType) {
+		this.itestHost = itestHost;
 		switch (databaseType) {
 		case ORACLE:
 			databaseTypePrefix = "oracle";
@@ -77,7 +83,10 @@ public class SqlQueryRunner {
 	}
 
 	public String getJdbcUrl() {
-		return databaseProperties.getProperty(databaseTypePrefix + ".database.url");
+		String port = databaseProperties.getProperty(databaseTypePrefix + ".database.port");
+		String schema = databaseProperties.getProperty(databaseTypePrefix + ".database.schema");
+		String url = "jdbc:oracle:thin:@" + itestHost.getHostName() + ":" + port + ":" + schema;
+		return url;
 	}
 
 	public String getUsername() {

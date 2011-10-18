@@ -3,7 +3,7 @@
 <#import "/sql/commonFunctions.ftl" as cmn>
 
 export ORACLE_HOME="${deployed.container.oraHome}"
-export ORACLE_SID="${cmn.lookup('username')}"
+#export ORACLE_SID="${cmn.lookup('schema')}"
 
 # will override the declarations above if ORACLE_HOME or ORACLE_SID are present
 <#include "/sql/linuxExportEnvVars.ftl">
