@@ -2,28 +2,19 @@ package com.xebialabs.deployit.plugins.tests.step;
 
 import static com.google.common.collect.Maps.newHashMap;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Map;
 
 import org.slf4j.MDC;
 
-import com.xebialabs.deployit.plugin.generic.ci.Container;
-import com.xebialabs.deployit.plugin.generic.freemarker.CiAwareObjectWrapper;
-import com.xebialabs.deployit.plugin.generic.freemarker.ConfigurationHolder;
 import com.xebialabs.deployit.plugin.generic.freemarker.FileUploader;
 import com.xebialabs.deployit.plugin.generic.step.ScriptExecutionStep;
 import com.xebialabs.deployit.plugin.overthere.ExecutionContextOverthereProcessOutputHandler;
+import com.xebialabs.deployit.plugin.overthere.HostContainer;
 import com.xebialabs.overthere.CmdLine;
 import com.xebialabs.overthere.OperatingSystemFamily;
 import com.xebialabs.overthere.OverthereFile;
 import com.xebialabs.overthere.OverthereProcessOutputHandler;
-import com.xebialabs.overthere.RuntimeIOException;
 import com.xebialabs.overthere.util.OverthereUtils;
-
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 
 @SuppressWarnings("serial")
 public class RemoteHttpTesterStep extends ScriptExecutionStep {
@@ -36,9 +27,9 @@ public class RemoteHttpTesterStep extends ScriptExecutionStep {
 	private int noOfRetries;
 	private int retryWaitInterval;
 
-	public RemoteHttpTesterStep(int order, String scriptPath, Container container, Map<String, Object> vars, String description, int startDeplay,
+	public RemoteHttpTesterStep(int order, String scriptPath, HostContainer hostContainer, Map<String, Object> vars, String description, int startDeplay,
 	        int noOfRetries, int retryWaitInterval) {
-		super(order, scriptPath, container, vars, description);
+		super(order, scriptPath, hostContainer, vars, description);
 		this.scriptTemplatePath = scriptPath;
 		this.vars = vars;
 
@@ -112,20 +103,6 @@ public class RemoteHttpTesterStep extends ScriptExecutionStep {
 		return targetExecutable;
 	}
 
-	private String evaluateTemplate(String templatePath, Map<String, Object> vars) {
-		Configuration cfg = ConfigurationHolder.getConfiguration();
-		try {
-			Template template = cfg.getTemplate(templatePath);
-			StringWriter sw = new StringWriter();
-			template.createProcessingEnvironment(vars, sw, new CiAwareObjectWrapper(new WorkingFolderUploader())).process();
-			return sw.toString();
-		} catch (IOException e) {
-			throw new RuntimeIOException(e);
-		} catch (TemplateException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	private String resolveOsSpecificTemplate() {
 		String osSpecificScript = scriptTemplatePath;
 
@@ -142,10 +119,6 @@ public class RemoteHttpTesterStep extends ScriptExecutionStep {
 		return osSpecificScript;
 	}
 
-	private boolean classpathResourceExists(String resource) {
-		return Thread.currentThread().getContextClassLoader().getResource(resource) != null;
-	}
-
 	private class WorkingFolderUploader implements FileUploader {
 		private Map<String, String> uploadedFiles = newHashMap();
 
@@ -160,14 +133,4 @@ public class RemoteHttpTesterStep extends ScriptExecutionStep {
 			return uploadedFile.getPath();
 		}
 	}
-
-	private String substringAfterLast(String str, char sub) {
-		int pos = str.lastIndexOf(sub);
-		if (pos == -1) {
-			return null;
-		} else {
-			return str.substring(pos + 1);
-		}
-	}
-
 }

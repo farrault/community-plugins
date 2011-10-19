@@ -11,8 +11,8 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 import com.xebialabs.deployit.plugin.api.deployment.execution.DeploymentExecutionContext;
-import com.xebialabs.deployit.plugin.generic.ci.Container;
 import com.xebialabs.deployit.plugin.generic.step.GenericBaseStep;
+import com.xebialabs.deployit.plugin.overthere.HostContainer;
 
 @SuppressWarnings("serial")
 public class LocalHttpTesterStep extends GenericBaseStep {
@@ -23,9 +23,9 @@ public class LocalHttpTesterStep extends GenericBaseStep {
 	private int noOfRetries;
 	private int retryWaitInterval;
 
-	public LocalHttpTesterStep(int order, String description, Container container, String url, String expectedResponseText, int startDeplay, int noOfRetries,
+	public LocalHttpTesterStep(int order, String description, HostContainer hostContainer, String url, String expectedResponseText, int startDeplay, int noOfRetries,
 	        int retryWaitInterval, boolean showPageInConsole) {
-		super(order, description, container);
+		super(order, description, hostContainer);
 		this.url = url;
 		this.expectedResponseText = expectedResponseText;
 		this.startDelay = startDeplay;
