@@ -27,20 +27,23 @@ The database plugin is a Deployit plugin that supports deployment of SQL files a
 
 ## SQL Scripts ##
 
-The [SqlScripts](#sql.SqlScripts) CI encompasses a folder containing SQL scripts that are to be executed on a database. SQL scripts come in two flavors, namely installation scripts and rollback scripts. Installation scripts are used to execute changes on the database, such as creation of a table or inserting data. Rollback scripts are associated with an installation script and undo the actions performed by the installation script. Executing an installation script followed by the accompanying rollback script should leave the database in an unchanged state.
+The [SqlScripts](#sql.SqlScripts) CI encompasses a folder containing SQL scripts that are to be executed on a database. SQL scripts come in two flavors, namely installation scripts and rollback scripts. Installation scripts are used to execute changes on the database, such as creation of a table or inserting data. Each installation script is associated with a rollback script which undoes the actions performed by it's companion installation script. Rollback scripts **must** have the exact same name as the installation script they are associated with and have the moniker `-rollback` attached to it. Executing an installation script followed by the accompanying rollback script should leave the database in an unchanged state.
 
 SQL scripts are ordered alphabetically based on their filename. This is an example of ordering of several installation scripts:
 
 * 1-create-user-table.sql
+* 1-create-user-table-rollback.sql
 * 10-drop-user-index.sql
+* 10-drop-user-index-rollback.sql
 * 2-insert-user.sql
+* 2-insert-user-rollback.sql
 * ...
 * 9-create-user-index.sql
+* 9-create-user-index-rollback.sql
 
-Note that in this example, the tenth script, _10-drop-user-index.sql_ would be incorrectly executed after the first script.
+Note that in this example, the tenth script, _10-drop-user-index.sql_ would be incorrectly executed after the first script, _1-create-user-table.sql_.
 
-When upgrading a SqlScripts CI, only those scripts that were not present in the previous package version are executed. For example, if the previous SqlScripts folder contained script1.sql and script2.sql, and the 
-new version of SqlScripts folder contains script2.sql and script3.sql, then only script3.sql will be executed as part of the upgrade. 
+When upgrading a SqlScripts CI, only those scripts that were not present in the previous package version are executed. For example, if the previous SqlScripts folder contained script1.sql and script2.sql, and the new version of SqlScripts folder contains script2.sql and script3.sql, then only script3.sql will be executed as part of the upgrade. 
 
 When undeploying a SqlScripts CI, all rollback scripts are executed in reverse alphabetical order.
 
