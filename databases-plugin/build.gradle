@@ -1,4 +1,4 @@
-commonBuildPath = hasProperty("localCommonBuildRepo") ? file(localCommonBuildRepo).toURL().toString() : 'https://github.com/xebialabs/deployit-common-build/raw/master'
+commonBuildPath = hasProperty("localCommonBuildRepo") ? file(localCommonBuildRepo).toURL().toString() : 'https://github.com/xebialabs/deployit-common-build/raw/development'
 apply from: "$commonBuildPath/repositories.gradle"
 apply from: "$commonBuildPath/plugin-build.gradle"
 
