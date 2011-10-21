@@ -13,6 +13,7 @@ import static com.xebialabs.overthere.OperatingSystemFamily.UNIX;
 import static com.xebialabs.overthere.ssh.SshConnectionBuilder.CONNECTION_TYPE;
 import static com.xebialabs.overthere.ssh.SshConnectionType.SFTP;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
@@ -22,8 +23,6 @@ import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.List;
-
-import junit.framework.Assert;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -130,7 +129,7 @@ public class OracleSqlClientItest {
 		DeltaSpecification spec = new DeltaSpecificationBuilder().initial(deploymentPackage, environment).create(deployed).build();
 		Plan resolvedPlan = tester.resolvePlan(spec);
 		List<DeploymentStep> resolvedSteps = resolvedPlan.getSteps();
-		assertThat(3, is(resolvedSteps.size()));
+		assertThat(resolvedSteps.size(), is(3));
 		Step.Result result = tester.executePlan(resolvedPlan, context);
 		assertThat(result, is(Step.Result.Success));
 	}
@@ -139,7 +138,7 @@ public class OracleSqlClientItest {
 		DeltaSpecification spec = new DeltaSpecificationBuilder().upgrade(newVersion, deployedApp).modify(previousDeployedArtifact, deployedArtifact).build();
 		Plan resolvedPlan = tester.resolvePlan(spec);
 		List<DeploymentStep> resolvedSteps = resolvedPlan.getSteps();
-		Assert.assertTrue(resolvedSteps.size() > 0);
+		assertThat(resolvedSteps.size(), greaterThan(0));
 		Step.Result result = tester.executePlan(resolvedPlan, context);
 		assertThat(result, is(Step.Result.Success));
 	}
@@ -148,7 +147,8 @@ public class OracleSqlClientItest {
 		DeltaSpecification spec = new DeltaSpecificationBuilder().undeploy(deployedApp).destroy(previousDeployedArtifact).build();
 		Plan resolvedPlan = tester.resolvePlan(spec);
 		List<DeploymentStep> resolvedSteps = resolvedPlan.getSteps();
-		assertThat(3, is(resolvedSteps.size()));
+		System.out.println(resolvedSteps);
+		assertThat(resolvedSteps.size(), is(4));
 		Step.Result result = tester.executePlan(resolvedPlan, context);
 		assertThat(result, is(Step.Result.Success));
 	}

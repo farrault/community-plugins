@@ -1,5 +1,5 @@
 WHENEVER SQLERROR EXIT SQL.SQLCODE
 
-delete from person where id in (1,2,3);
+delete from person where id = 4;
 commit;
 exit;
