@@ -127,6 +127,7 @@ public class OracleSqlClientItest {
 
     private void assertDeploy(DeploymentPackage deploymentPackage, Environment environment, Deployed deployed) {
 		DeltaSpecification spec = new DeltaSpecificationBuilder().initial(deploymentPackage, environment).create(deployed).build();
+		System.out.println("Deltaspec: " + spec + ", delta's: " + spec.getDeltas());
 		Plan resolvedPlan = tester.resolvePlan(spec);
 		List<DeploymentStep> resolvedSteps = resolvedPlan.getSteps();
 		assertThat(resolvedSteps.size(), is(3));
@@ -147,7 +148,6 @@ public class OracleSqlClientItest {
 		DeltaSpecification spec = new DeltaSpecificationBuilder().undeploy(deployedApp).destroy(previousDeployedArtifact).build();
 		Plan resolvedPlan = tester.resolvePlan(spec);
 		List<DeploymentStep> resolvedSteps = resolvedPlan.getSteps();
-		System.out.println(resolvedSteps);
 		assertThat(resolvedSteps.size(), is(4));
 		Step.Result result = tester.executePlan(resolvedPlan, context);
 		assertThat(result, is(Step.Result.Success));
