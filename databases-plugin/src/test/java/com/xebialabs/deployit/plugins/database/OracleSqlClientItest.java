@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -109,14 +110,14 @@ public class OracleSqlClientItest {
 	}
 
     @Test
-	public void deployUndeploySqlFolder() throws IOException {
-		Folder sqlScriptFolderV1 = createArtifact("sqlScripts", "1.0", "ora_sqlscripts_v1", "sql.SqlScripts", folder.getRoot());
+	public void deployUndeploySqlFolder() throws IOException, URISyntaxException {
+		Folder sqlScriptFolderV1 = createArtifactWithoutCopy("sqlScripts", "1.0", "ora_sqlscripts_v1", "sql.SqlScripts", folder.getRoot());
 		DeploymentPackage deploymentPackageV1 = createDeploymentPackage("1.0", sqlScriptFolderV1);
 		ExecutedFolder<Folder> executedSqlScriptsV1 = (ExecutedFolder<Folder>) tester.generateDeployed(sqlScriptFolderV1, container, Type.valueOf("sql.ExecutedSqlScripts"));
 		DeployedApplication appV1 = newDeployedApplication("PetClinic", "1.0", sqlScriptFolderV1);
 		assertDeploy(deploymentPackageV1, environment, executedSqlScriptsV1);
 
-		Folder sqlScriptFolderV2 = createArtifact("sqlScripts", "2.0", "ora_sqlscripts_v2", "sql.SqlScripts", folder.getRoot());
+		Folder sqlScriptFolderV2 = createArtifactWithoutCopy("sqlScripts", "2.0", "ora_sqlscripts_v2", "sql.SqlScripts", folder.getRoot());
 		DeploymentPackage deploymentPackageV2 = createDeploymentPackage("2.0", sqlScriptFolderV2);
 		ExecutedFolder<Folder> executedSqlScriptsV2 = (ExecutedFolder<Folder>) tester.generateDeployed(sqlScriptFolderV2, container, Type.valueOf("sql.ExecutedSqlScripts"));
 		DeployedApplication appV2 = newDeployedApplication("PetClinic", "2.0", sqlScriptFolderV2);
@@ -127,7 +128,6 @@ public class OracleSqlClientItest {
 
     private void assertDeploy(DeploymentPackage deploymentPackage, Environment environment, Deployed deployed) {
 		DeltaSpecification spec = new DeltaSpecificationBuilder().initial(deploymentPackage, environment).create(deployed).build();
-		System.out.println("Deltaspec: " + spec + ", delta's: " + spec.getDeltas());
 		Plan resolvedPlan = tester.resolvePlan(spec);
 		List<DeploymentStep> resolvedSteps = resolvedPlan.getSteps();
 		assertThat(resolvedSteps.size(), is(3));
@@ -163,14 +163,14 @@ public class OracleSqlClientItest {
 		return deployedApp;
 	}
 
-	public static <T extends SourceArtifact> Folder createArtifact(String name, String version, String classpathResource, String type, File workingFolder)
-	        throws IOException {
-		Folder folder = newInstance(type);
-		folder.setId("Applications/Test/" + version + "/" + name);
+	private <T extends SourceArtifact> T createArtifactWithoutCopy(String name, String version, String classpathResource, String type, File workingFolder)
+		throws IOException, URISyntaxException {
+		@SuppressWarnings("unchecked")
+		T artifact = (T) newInstance(type);
+		artifact.setId(id("Applications", "Test", version, name));
 		URL artifactURL = Thread.currentThread().getContextClassLoader().getResource(classpathResource);
-		folder.setFile(LocalFile.valueOf(new File(artifactURL.getFile())));
-		return folder;
-
+		artifact.setFile(LocalFile.valueOf(new File(artifactURL.toURI().getPath())));
+		return artifact;
 	}
 
 	private static String createPrivateKeyFile() {
