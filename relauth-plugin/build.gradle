@@ -1,5 +1,6 @@
-apply from: 'https://github.com/xebialabs/deployit-common-build/raw/master/repositories.gradle'
-apply from: 'https://github.com/xebialabs/deployit-common-build/raw/master/plugin-build.gradle'
+commonBuildPath = hasProperty("localCommonBuildRepo") ? file(localCommonBuildRepo).toURL().toString() : 'https://github.com/xebialabs/deployit-common-build/raw/master'
+apply from: "$commonBuildPath/repositories.gradle"
+apply from: "$commonBuildPath/plugin-build.gradle"
 
 excludeFromAll(project, 'com.google.collections', 'google-collections')
 
