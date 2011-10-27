@@ -42,7 +42,8 @@ dependencies {
 }
 
 afterEvaluate { eachProject ->
- Set testTasks = eachProject.tasks.withType(Test).all 
+  Set testTasks = eachProject.tasks.withType(Test).all
+  
   testTasks.each { testTask ->
     testTask.onlyIf { !project.hasProperty('skipTests') }
     testTask.afterSuite { descriptor, result ->
