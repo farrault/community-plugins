@@ -1,12 +1,12 @@
 package com.xebialabs.deployit.plugin.ra;
 
+import com.xebialabs.deployit.plugin.api.udm.Environment;
+import com.xebialabs.deployit.plugin.api.udm.Version;
+
 import java.util.Collection;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.xebialabs.deployit.plugin.api.udm.Environment;
-import com.xebialabs.deployit.plugin.api.udm.Version;
+import static com.google.common.base.Strings.nullToEmpty;
 
 /**
  * Helper class that performs the validation of the release authorization conditions.
@@ -36,7 +36,7 @@ public class RAConditionVerifier {
 				continue;
 			}
 			
-			if (conditionProperty instanceof String && StringUtils.isBlank((String) conditionProperty)) {
+			if (conditionProperty instanceof String && nullToEmpty((String) conditionProperty).trim().isEmpty()) {
 				result.logFailedValidation(condition);
 				continue;
 			}

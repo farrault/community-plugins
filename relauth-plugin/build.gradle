@@ -1,29 +1,44 @@
-commonBuildPath = hasProperty("localCommonBuildRepo") ? file(localCommonBuildRepo).toURL().toString() : 'https://github.com/xebialabs/deployit-common-build/raw/master'
-apply from: "$commonBuildPath/repositories.gradle"
-apply from: "$commonBuildPath/plugin-build.gradle"
+defaultTasks 'build'
 
-excludeFromAll(project, 'com.google.collections', 'google-collections')
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+group = 'com.xebialabs.deployit.community'
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+	mavenRepo urls: "${nexusBaseUrl}/repositories/releases"
+}
+
+configurations {
+	compile {
+		transitive = false
+	}
+}
 
 version = '3.5-SNAPSHOT'
 apiVersion = '3.5.1.2'
 
 dependencies {
 	compile "com.xebialabs.deployit:udm-plugin-api:$apiVersion"
-	compile deps.guava
-	compile deps.commons_lang, deps.commons_io, deps.commons_collections
-
-	testCompile "com.xebialabs.deployit:udm-test-support:$apiVersion"
-	testCompile deps.hamcrest_all
-	testCompile deps.itest_support
-	testCompile deps.spring_beans
-	testCompile 'pl.pragmatists:JUnitParams:0.3.0'
+	compile "com.google.guava:guava:10.0.1"
 }
 
-def excludeFromAll(project, group, module) {
-	project.afterEvaluate { evaluatedProject ->
-		evaluatedProject.configurations.all*.getDependencies(ModuleDependency)*.each {
-			it.exclude group: group, module: module
-		}
-	}	
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = "javadoc"
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar, javadocJar
 }
 
