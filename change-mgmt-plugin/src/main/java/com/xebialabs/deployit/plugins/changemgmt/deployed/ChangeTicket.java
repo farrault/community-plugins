@@ -21,16 +21,17 @@
 package com.xebialabs.deployit.plugins.changemgmt.deployed;
 
 import com.xebialabs.deployit.plugin.api.deployment.planning.DeploymentPlanningContext;
+import com.xebialabs.deployit.plugin.api.deployment.specification.Delta;
 import com.xebialabs.deployit.plugin.api.udm.Metadata;
 import com.xebialabs.deployit.plugin.generic.ci.Resource;
-import com.xebialabs.deployit.plugins.generic.ext.deployed.ScriptPropertyResolvingExecutedScript;
+import com.xebialabs.deployit.plugin.generic.deployed.ExecutedScript;
 
 @SuppressWarnings("serial")
 @Metadata(virtual = true, description = "An Change ticket in a chg.ChangeManager")
-public class ChangeTicket extends ScriptPropertyResolvingExecutedScript<Resource> {
+public class ChangeTicket extends ExecutedScript<Resource> {
 
-    @Override
-    public void executeDestroy(DeploymentPlanningContext ctx) {
+	@Override
+	public void executeDestroy(DeploymentPlanningContext ctx, Delta d) {
         // do nothing - destroy not supported
-    }
+	}
 }

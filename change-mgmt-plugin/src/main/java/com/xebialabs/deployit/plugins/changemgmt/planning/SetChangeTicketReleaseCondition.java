@@ -21,8 +21,6 @@
 package com.xebialabs.deployit.plugins.changemgmt.planning;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.xebialabs.deployit.plugin.api.reflect.Types.isSubtypeOf;
-import static com.xebialabs.deployit.plugins.releaseauth.planning.CheckReleaseConditionsAreMet.ENV_RELEASE_CONDITIONS_PROPERTY;
 
 import java.util.List;
 import java.util.Set;
@@ -47,11 +45,12 @@ import com.xebialabs.deployit.plugins.changemgmt.deployed.ChangeTicket;
 public class SetChangeTicketReleaseCondition {
     private static final Type CHANGE_MANAGER_TYPE = Type.valueOf("chg.ChangeManager");
     private static final String CHANGE_TICKET_CONDITION_NAME_PROPERTY = "changeTicketReleaseConditionName";
+	static final String ENV_RELEASE_CONDITIONS_PROPERTY = "conditions";
+
     private static final List<DeploymentStep> NO_STEPS = ImmutableList.of();
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(SetChangeTicketReleaseCondition.class);
-    
-    @PrePlanProcessor
+	private static final Logger LOGGER = LoggerFactory.getLogger(SetChangeTicketReleaseCondition.class);
+
+	@PrePlanProcessor
     public static List<DeploymentStep> setReleaseCondition(DeltaSpecification spec) {
         setChangeTicketCondition(spec);
         return NO_STEPS;
@@ -76,19 +75,21 @@ public class SetChangeTicketReleaseCondition {
                 changeTicketCondition, CHANGE_TICKET_CONDITION_NAME_PROPERTY, CHANGE_MANAGER_TYPE);
 
         // looking for a creation or modification of a Change Ticket
-        Boolean hasChangeTicket = Boolean.valueOf(
-                Iterables.any(spec.getDeltas(), new Predicate<Delta>() {
-                    @Override
-                    public boolean apply(Delta input) {
-                        // operation check first to avoid NPEs
-                        return ((input.getOperation().equals(Operation.CREATE)
-                                 || input.getOperation().equals(Operation.MODIFY))
-                                && isSubtypeOf(Type.valueOf(ChangeTicket.class), 
-                                        input.getDeployed().getType()));
-                    }
-                }));
+        Boolean hasChangeTicket = Iterables.any(spec.getDeltas(), new Predicate<Delta>() {
+	        @Override
+	        public boolean apply(Delta input) {
+		        // operation check first to avoid NPEs
+		        return ((input.getOperation().equals(Operation.CREATE)
+				        || input.getOperation().equals(Operation.MODIFY))
+				        && isSubtypeOf(Type.valueOf(ChangeTicket.class), input.getDeployed().getType()));
+	        }
+        });
         deploymentPackage.putSyntheticProperty(changeTicketCondition, hasChangeTicket);
     }
+
+	private static boolean isSubtypeOf(Type supertype, Type subtype) {
+		return DescriptorRegistry.getDescriptor(subtype).isAssignableTo(supertype);
+	}
 
     // not a constant because the class may (?) be loaded before the registry is initialized
     private static String getChangeTicketCondition() {

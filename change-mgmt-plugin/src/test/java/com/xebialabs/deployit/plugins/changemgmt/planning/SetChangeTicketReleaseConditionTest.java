@@ -22,7 +22,7 @@ package com.xebialabs.deployit.plugins.changemgmt.planning;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static com.xebialabs.deployit.deployment.planner.DeltaSpecificationBuilder.newSpecification;
-import static com.xebialabs.deployit.plugins.releaseauth.planning.CheckReleaseConditionsAreMet.ENV_RELEASE_CONDITIONS_PROPERTY;
+import static com.xebialabs.deployit.plugins.changemgmt.planning.SetChangeTicketReleaseCondition.ENV_RELEASE_CONDITIONS_PROPERTY;
 import static com.xebialabs.deployit.test.support.TestUtils.createDeploymentPackage;
 import static com.xebialabs.deployit.test.support.TestUtils.createEnvironment;
 import static com.xebialabs.deployit.test.support.TestUtils.newInstance;
@@ -30,6 +30,8 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.junit.Assert.assertThat;
 
+import com.xebialabs.deployit.plugin.api.udm.Container;
+import com.xebialabs.deployit.plugins.changemgmt.Server;
 import org.hamcrest.core.Is;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -39,8 +41,6 @@ import com.xebialabs.deployit.plugin.api.boot.PluginBooter;
 import com.xebialabs.deployit.plugin.api.deployment.specification.DeltaSpecification;
 import com.xebialabs.deployit.plugin.api.udm.Deployed;
 import com.xebialabs.deployit.plugin.api.udm.Environment;
-import com.xebialabs.deployit.plugin.generic.ci.Container;
-import com.xebialabs.deployit.plugin.test.yak.ci.YakServer;
 import com.xebialabs.deployit.plugins.changemgmt.deployed.ChangeTicket;
 import com.xebialabs.deployit.test.support.TestUtils;
 
@@ -65,7 +65,7 @@ public class SetChangeTicketReleaseConditionTest {
     @Test(expected = IllegalStateException.class)
     public void failsIfReleaseConditionIsUserDefined() {
         Environment env = newEnvironment();
-        env.putSyntheticProperty(ENV_RELEASE_CONDITIONS_PROPERTY, 
+        env.putSyntheticProperty(ENV_RELEASE_CONDITIONS_PROPERTY,
                 newHashSet(changeTicketReleaseCondition));
         DeltaSpecification deltaSpec = newDeltaSpec(env).build();
         deltaSpec.getDeployedApplication().getVersion()
@@ -114,14 +114,14 @@ public class SetChangeTicketReleaseConditionTest {
     }
     
     private static Environment newEnvironment() {
-        return createEnvironment((YakServer) newInstance("yak.YakServer"));
+        return createEnvironment((Server) newInstance("chg.Server"));
     }
     
     private static DeltaSpecificationBuilder newDeltaSpec(Environment env,
             Deployed<?, ?>... newDeployeds) {
         DeltaSpecificationBuilder deltaSpec = 
             newSpecification().initial(createDeploymentPackage(), env);
-        deltaSpec.create((Deployed<?, ?>) newInstance("yak.DeployedYakFile"));
+        deltaSpec.create((Deployed<?, ?>) newInstance("chg.DeployedChange"));
         for (Deployed<?, ?> newDeployed : newDeployeds) {
             deltaSpec.create(newDeployed);
         }
