@@ -43,7 +43,7 @@ CI-Type: jee.Ear
 CI-Name: PetClinic
 
 Name: PetclinicTest
-CI-Type: test.HttpRequestTest
+CI-Type: tests.HttpRequestTest
 CI-url: http://jboss-51:8080/petclinic
 CI-expectedResponseText: Display all veterinarians
 CI-startDelay: 10

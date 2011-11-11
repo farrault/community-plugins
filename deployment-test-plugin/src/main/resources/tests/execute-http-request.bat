@@ -5,9 +5,9 @@ echo tempDirectory is %tempDirectory%
 
 set RESPONSE_FILE=%tempDirectory%\http-response.txt
 
-echo Executing "wget <#if (deployed.ignoreCertificateWarnings?? && deployed.ignoreCertificateWarnings)>--no-check-certificate</#if> -O %RESPONSE_FILE% ${deployed.url}"
+echo Executing "${deployed.wgetExecutable} <#if (deployed.ignoreCertificateWarnings?? && deployed.ignoreCertificateWarnings)>--no-check-certificate</#if> -O %RESPONSE_FILE% ${deployed.url}"
 
-wget <#if (deployed.ignoreCertificateWarnings?? && deployed.ignoreCertificateWarnings)>--no-check-certificate</#if> -O %RESPONSE_FILE% "${deployed.url}"
+${deployed.wgetExecutable} <#if (deployed.ignoreCertificateWarnings?? && deployed.ignoreCertificateWarnings)>--no-check-certificate</#if> -O %RESPONSE_FILE% "${deployed.url}"
 
 set WGET_EXIT_CODE=%errorlevel%
 echo WGET_EXIT_CODE is %WGET_EXIT_CODE%

@@ -1,36 +1,21 @@
 package com.xebialabs.deployit.plugins.tests;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Sets.newHashSet;
-import static com.xebialabs.deployit.test.support.TestUtils.createDeploymentPackage;
-import static com.xebialabs.deployit.test.support.TestUtils.createEnvironment;
-import static com.xebialabs.deployit.test.support.TestUtils.id;
-import static com.xebialabs.deployit.test.support.TestUtils.newInstance;
-import static com.xebialabs.overthere.ConnectionOptions.ADDRESS;
-import static com.xebialabs.overthere.ConnectionOptions.PASSWORD;
-import static com.xebialabs.overthere.ConnectionOptions.USERNAME;
-import static com.xebialabs.overthere.cifs.CifsConnectionType.TELNET;
-import static com.xebialabs.overthere.ssh.SshConnectionBuilder.CONNECTION_TYPE;
-import static java.util.Arrays.asList;
+import com.xebialabs.deployit.plugin.api.boot.PluginBooter;
+import com.xebialabs.deployit.plugin.api.deployment.execution.DeploymentStep;
+import com.xebialabs.deployit.plugin.api.deployment.planning.DeploymentPlanningContext;
+import com.xebialabs.deployit.plugin.api.udm.*;
+import org.junit.BeforeClass;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.BeforeClass;
-
-import com.xebialabs.deployit.plugin.api.boot.PluginBooter;
-import com.xebialabs.deployit.plugin.api.deployment.execution.DeploymentStep;
-import com.xebialabs.deployit.plugin.api.deployment.planning.DeploymentPlanningContext;
-import com.xebialabs.deployit.plugin.api.udm.Application;
-import com.xebialabs.deployit.plugin.api.udm.Container;
-import com.xebialabs.deployit.plugin.api.udm.Deployable;
-import com.xebialabs.deployit.plugin.api.udm.DeployedApplication;
-import com.xebialabs.deployit.plugin.api.udm.DeploymentPackage;
-import com.xebialabs.deployit.plugin.api.udm.Environment;
-import com.xebialabs.deployit.plugin.overthere.Host;
-import com.xebialabs.overthere.OperatingSystemFamily;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.xebialabs.deployit.test.support.TestUtils.id;
+import static com.xebialabs.deployit.test.support.TestUtils.newInstance;
+import static java.util.Arrays.asList;
 
 public abstract class TestBase {
 
@@ -98,6 +83,11 @@ public abstract class TestBase {
 
         @Override
         public void setAttribute(String s, Object obj) {
+            throw new UnsupportedOperationException("TODO Auto-generated method stub");
+        }
+
+        @Override
+        public DeployedApplication getDeployedApplication() {
             throw new UnsupportedOperationException("TODO Auto-generated method stub");
         }
     }

@@ -11,8 +11,8 @@ apply plugin: 'maven'
 apply plugin: 'eclipse'
 
 group = 'com.xebialabs.deployit.plugins'
-version = '3.5'
-apiVersion = '3.6.0-beta-6'
+version = '3.6.0-SNAPSHOT'
+apiVersion = '3.6.0-rc-1'
 
 sourceCompatibility = 1.6
 sourceEncoding = 'UTF-8'
@@ -37,7 +37,7 @@ dependencies {
     
   runtime "com.xebialabs.deployit:doc-generator:$apiVersion"
   testCompile 'junit:junit:4.8.2'
-  testCompile 'com.xebialabs.deployit:udm-test-support:3.5.0'
+  testCompile 'com.xebialabs.deployit:udm-test-support:$apiVersion'
   testCompile 'ch.qos.logback:logback-classic:0.9.24'
 }
 
