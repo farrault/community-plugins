@@ -2,10 +2,10 @@
 
 Welcome to the Deployit community plugin repository on github!
 
-Here you will find plugins that can be used to add capabilities to your existing Deployit installation. The source code
+Here you will find plugins that can be used to add capabilities to your existing [Deployit|http://www.xebialabs.com/tour] installation. The source code
 for the plugins is also provided if you are curious to see how a plugin works or want to improve it.
 
-_Note: the plugins here are provided as-is as a service to Deployit users. Support for these plugins is provided through
+_Note: the plugins here are provided on an as-is basis as a service to Deployit users. Support for these plugins is provided through
 XebiaLabs' professional services department._
 
 # Finding a plugin
