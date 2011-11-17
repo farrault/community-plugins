@@ -1,0 +1,77 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'com.xebialabs.deployit.community'
+apiVersion = '3.6.0'
+version = "${apiVersion}_1"
+
+sourceCompatibility = 1.6
+sourceEncoding = 'UTF-8'
+
+dependencies {
+  compile "com.xebialabs.deployit:udm-plugin-api:${apiVersion}"
+  testCompile 'junit:junit:4.8.2'
+  testCompile "com.xebialabs.deployit:udm-test-support:3.5.0"
+  testCompile 'com.xebialabs.deployit:yak-plugin:3.5.0'
+  testCompile 'ch.qos.logback:logback-classic:0.9.24'
+}
+
+repositories {
+  mavenLocal()
+}
+
+task sourcesJar(type: Jar) {
+  classifier = 'sources'
+  from sourceSets.main.allSource  
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
+}
+
+artifacts {
+  archives sourcesJar, javadocJar
+}
+
+afterEvaluate { eachProject ->
+  Set testTasks = eachProject.tasks.withType(Test).all
+  
+  testTasks.each { testTask ->
+    testTask.onlyIf { !project.hasProperty('skipTests') }
+    testTask.afterSuite { descriptor, result ->
+      if (descriptor.className != null) {
+        println "${descriptor.className}: ${result.testCount} tests; failed: ${result.failedTestCount}; skipped: ${result.skippedTestCount}"
+      } else if (descriptor.className == null && descriptor.parent == null) {
+        println "Total: ${result.testCount} tests; failed: ${result.failedTestCount}; skipped: ${result.skippedTestCount}"
+      }
+    }
+  }
+}
+
+task generatePom << {
+  pom { 
+    project { 
+      build { 
+        plugins {
+          plugin {
+            artifactId 'maven-compiler-plugin'
+            version '2.3'
+            configuration {
+              encoding = sourceEncoding 
+              source = "${sourceCompatibility}".toString()
+              target = "${sourceCompatibility}".toString()
+            }
+          }
+          plugin {
+            artifactId 'maven-resources-plugin'
+            version '2.3'
+            configuration {
+              encoding = sourceEncoding
+            }
+          }
+        } 
+      } 
+    } 
+  }.writeTo('pom.xml')
+}
