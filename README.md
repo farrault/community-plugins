@@ -1,5 +1,3 @@
-[Deployit](http://www.xebialabs.com/sites/default/files/Deployit-Logo.jpg)
-
 # Deployit Community Plugins #
 
 Welcome to the Deployit community plugin repository on github!
@@ -38,4 +36,4 @@ message on our support site at http://support.xebialabs.com.
 
 Sincerely,
 
-[XebiaLabs](http://www.xebialabs.com/sites/all/themes/xebialabs/logo.png)
+XebiaLabs
