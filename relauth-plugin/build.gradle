@@ -21,8 +21,8 @@ configurations {
 	}
 }
 
-version = '3.5-SNAPSHOT'
-apiVersion = '3.5.1.2'
+version = '3.6-SNAPSHOT'
+apiVersion = '3.6.0'
 
 dependencies {
 	compile "com.xebialabs.deployit:udm-plugin-api:$apiVersion"
