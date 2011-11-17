@@ -1,4 +1,4 @@
-# Preface #
+# Release Authorization plugin #
 
 This document describes the functionality provided by the Release Authorization (RA) plugin.
 
@@ -16,7 +16,7 @@ The Release Authorization (RA) plugin is a Deployit plugin that adds capabilitie
 # Requirements #
 
 * **Deployit requirements**
-	* **Deployit**: version 3.5+
+	* **Deployit**: version 3.6+
 	* **Other Deployit Plugins**: None
 
 # Defining deployment package properties #
