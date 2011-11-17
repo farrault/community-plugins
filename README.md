@@ -1,4 +1,6 @@
-# Deployit Community Plugins
+[Deployit](http://www.xebialabs.com/sites/default/files/Deployit-Logo.jpg)
+
+# Deployit Community Plugins #
 
 Welcome to the Deployit community plugin repository on github!
 
@@ -28,3 +30,12 @@ installation directory. See Deployit's *System Administration Manual* for more i
 If you want to add features to a plugin, fix a bug or otherwise contribute, great! Fork the community-plugins repository,
 make your changes, test them and submit a pull request to us so we can incorporate your changes and make them available
 to other Deployit users.
+
+# Enjoy!
+
+We hope the plugins provided here will help you make the most of Deployit. Please let us know what you think by posting a 
+message on our support site at http://support.xebialabs.com.
+
+Sincerely,
+
+[XebiaLabs](http://www.xebialabs.com/sites/all/themes/xebialabs/logo.png)
