@@ -26,9 +26,9 @@ Release authorization is concerned with the conditions which permit a particular
 To define release authorization properties on the deployment package, create a _synthetic.xml_ file that modifies the _udm.DeploymentPackage_ CI to add the properties to be checked. The following XML snippet shows an example:
 
 	<type-modification type="udm.DeploymentPackage">
-	        <property name="hasReleaseNotes" description="Indicates the package contains release notes" kind="boolean" category="Release Auth"/>
-	        <property name="isPerformanceTested" description="Indicates the package has been performance tested" kind="boolean" category="Release Auth"/>
-	        <property name="hasFinalOk" description="Indicates the package has been given the final OK to be deployed on production" kind="boolean" category="Release Auth"/>
+	        <property name="hasReleaseNotes" description="Indicates the package contains release notes" required="false" kind="boolean" category="Release Auth"/>
+	        <property name="isPerformanceTested" description="Indicates the package has been performance tested" required="false" kind="boolean" category="Release Auth"/>
+	        <property name="hasFinalOk" description="Indicates the package has been given the final OK to be deployed on production" required="false" kind="boolean" category="Release Auth"/>
 	</type-modification>
 
 Release authorization condition properties can be any allowed type. Boolean properties must have the value _true_ to pass validation, other properties must not be empty.
