@@ -1,12 +1,12 @@
-# Preface #
+# Deployment Tests Plugin #
 
-This document describes the functionality provided by the Test plugin.
+This document describes the functionality provided by the deployment tests plugin.
 
 See the **Deployit Reference Manual** for background information on Deployit and deployment concepts.
 
 # Overview #
 
-The tests-plugin is a Deployit plugin that supports execution of post-deployment application tests. These post deployment tests may includes tests such as testing whether the deployed application is accessible 
+The deployment-tests-plugin is a Deployit plugin that supports execution of post-deployment application tests. These post deployment tests may includes tests such as testing whether the deployed application is accessible 
 or whether the created datasource is functioning properly or not. The tests-plugin is intended to provide such functionality to the Deployit server.
 
 ##Features##
