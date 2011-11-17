@@ -11,8 +11,8 @@ apply plugin: 'maven'
 apply plugin: 'eclipse'
 
 group = 'com.xebialabs.deployit.plugins'
-version = '3.6.0-SNAPSHOT'
-apiVersion = '3.6.0-rc-1'
+version = '3.6.0'
+apiVersion = '3.6.0'
 
 sourceCompatibility = 1.6
 sourceEncoding = 'UTF-8'
@@ -22,7 +22,7 @@ configurations {
 }
 
 docgen=[:]
-docgen.testPluginManual = [title: 'Test Plugin Manual', appendCiReference: true, prefixes: 'tests']
+docgen.testPluginManual = [title: 'Deployment Test Plugin Manual', appendCiReference: true, prefixes: 'tests']
 apply from: "$commonBuildPath/documentation.gradle"
 documentationZip.dependsOn << 'classes'
 
