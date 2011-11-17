@@ -17,15 +17,6 @@ apiVersion = '3.6.0'
 sourceCompatibility = 1.6
 sourceEncoding = 'UTF-8'
 
-configurations {
-	docgen
-}
-
-docgen=[:]
-docgen.testPluginManual = [title: 'Deployment Test Plugin Manual', appendCiReference: true, prefixes: 'tests']
-apply from: "$commonBuildPath/documentation.gradle"
-documentationZip.dependsOn << 'classes'
-
 dependencies {
   compile deps.overthere
   compile "com.xebialabs.deployit:udm-plugin-api:$apiVersion"
