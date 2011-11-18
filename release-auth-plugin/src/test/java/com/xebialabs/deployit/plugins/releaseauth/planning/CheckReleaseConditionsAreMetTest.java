@@ -56,25 +56,25 @@ public class CheckReleaseConditionsAreMetTest {
     @Test(expected = IllegalArgumentException.class)
     public void failsIfAReleaseConditionsIsNull() {
         Environment env = newEnvironment();
-        env.putSyntheticProperty("releaseConditions", newHashSet("hasReleaseNotes"));
+        env.setProperty("releaseConditions", newHashSet("hasReleaseNotes"));
         CheckReleaseConditionsAreMet.validate(newDeltaSpec(env).build());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void failsIfAReleaseConditionsIsFalse() {
         Environment env = newEnvironment();
-        env.putSyntheticProperty("releaseConditions", newHashSet("hasReleaseNotes"));
+        env.setProperty("releaseConditions", newHashSet("hasReleaseNotes"));
         DeltaSpecification deltaSpec = newDeltaSpec(env).build();
-        deltaSpec.getDeployedApplication().getVersion().putSyntheticProperty("hasReleaseNotes", FALSE);
+        deltaSpec.getDeployedApplication().getVersion().setProperty("hasReleaseNotes", FALSE);
         CheckReleaseConditionsAreMet.validate(deltaSpec);
     }
     
     @Test
     public void succeedsIfReleaseConditionsAreMet() {
         Environment env = newEnvironment();
-        env.putSyntheticProperty("releaseConditions", newHashSet("hasReleaseNotes"));
+        env.setProperty("releaseConditions", newHashSet("hasReleaseNotes"));
         DeltaSpecification deltaSpec = newDeltaSpec(env).build();
-        deltaSpec.getDeployedApplication().getVersion().putSyntheticProperty("hasReleaseNotes", TRUE);
+        deltaSpec.getDeployedApplication().getVersion().setProperty("hasReleaseNotes", TRUE);
         CheckReleaseConditionsAreMet.validate(deltaSpec);
     }
     

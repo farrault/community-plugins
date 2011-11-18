@@ -48,15 +48,14 @@ public class CheckReleaseConditionsAreMet {
     }
     
     protected static Set<String> validateReleaseConditions(DeployedApplication deployedApplication) {
-        Set<String> conditions = deployedApplication.getEnvironment().getSyntheticProperty(ENV_RELEASE_CONDITIONS_PROPERTY);
+        Set<String> conditions = deployedApplication.getEnvironment().getProperty(ENV_RELEASE_CONDITIONS_PROPERTY);
         if ((conditions == null) || (conditions.isEmpty())) {
             return newHashSet();
         }
         
         Set<String> violatedConditions = newHashSet();
         for (String conditionName : conditions) {
-            if (!TRUE.equals(deployedApplication.getVersion()
-                             .getSyntheticProperty(conditionName))) {
+            if (!TRUE.equals(deployedApplication.getVersion().getProperty(conditionName))) {
                 violatedConditions.add(conditionName);
             }
         }

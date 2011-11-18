@@ -1,0 +1,14 @@
+<synthetic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns="http://www.xebialabs.com/deployit/synthetic"
+           xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd">
+           
+		<!-- Add a property for release authorization conditions to the environment: -->
+    <type-modification type="udm.Environment">
+        <property name="releaseConditions" kind="set_of_string" required="false" category="Release Mgmt" description="Names of condition properties on the udm.DeploymentPackage that must to be met (i.e. set to 'true') for a deployment to this environment to be allowed"/>
+    </type-modification>
+
+		<!-- synthetic properties used in tests must be defined in the type descriptor -->
+    <type-modification type="udm.DeploymentPackage">
+        <property name="hasReleaseNotes" kind="boolean" default="false" category="Release Auth"/>
+    </type-modification>
+</synthetic>
