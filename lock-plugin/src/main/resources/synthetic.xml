@@ -1,0 +1,14 @@
+<synthetic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns="http://www.xebialabs.com/deployit/synthetic"
+           xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd">
+
+    <type-modification type="udm.BaseContainer">
+        <property name="allowConcurrentDeployments" kind="boolean" required="false" default="false" description="If set, multiple deployments at the same time can be executed, and a 'collision avoidance' check will not be executed" />
+        
+        <!-- admin properties -->
+        <!-- DefaultOrders.PRE_FLIGHT + 2 -->
+        <property name="deploymentInProgressCheckOrder" kind="integer" hidden="true" default="2" />
+        <!-- DefaultOrders.POST_FLIGHT - 2 -->
+        <property name="deploymentInProgressCheckCleanupOrder" kind="integer" hidden="true" default="98" />
+    </type-modification>
+</synthetic>
