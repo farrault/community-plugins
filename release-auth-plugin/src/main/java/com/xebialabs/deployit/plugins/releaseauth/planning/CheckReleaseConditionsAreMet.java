@@ -27,35 +27,61 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableSet;
 import com.xebialabs.deployit.plugin.api.deployment.execution.DeploymentStep;
 import com.xebialabs.deployit.plugin.api.deployment.planning.PostPlanProcessor;
 import com.xebialabs.deployit.plugin.api.deployment.specification.DeltaSpecification;
 import com.xebialabs.deployit.plugin.api.udm.DeployedApplication;
+import com.xebialabs.deployit.plugin.api.udm.Environment;
+import com.xebialabs.deployit.plugin.api.udm.Version;
+import com.xebialabs.deployit.plugins.releaseauth.step.CheckReleaseConditionsStep;
 
 public class CheckReleaseConditionsAreMet {
     public static final String ENV_RELEASE_CONDITIONS_PROPERTY = "releaseConditions";
+    private static final String ENV_RECHECK_CONDITIONS_PROPERTY = "recheckConditionsAtDeploymentTime";
+    private static final String ENV_RECHECK_CONDITIONS_ORDER_PROPERTY = "recheckConditionsAtDeploymentTimeOrder";
+
     private static final List<DeploymentStep> NO_STEPS = ImmutableList.of();
     
     // allow other plugins to dynamically set/modify release conditions before validation
     @PostPlanProcessor
     public static List<DeploymentStep> validate(DeltaSpecification spec) {
-        Set<String> violatedConditions = validateReleaseConditions(spec.getDeployedApplication());
+        DeployedApplication deployedApplication = spec.getDeployedApplication();
+        Set<String> conditions = getReleaseConditions(deployedApplication);
+        
+        if (conditions.isEmpty()) {
+        	return NO_STEPS;
+        }
+        
+		Set<String> violatedConditions = validateReleaseConditions(conditions, 
+				deployedApplication.getVersion());
         if (!violatedConditions.isEmpty()) {
             throw new IllegalArgumentException(buildErrorMessage(
-                    spec.getDeployedApplication(), violatedConditions));
+                    deployedApplication, violatedConditions));
         }
-        return NO_STEPS;
+        
+        Builder<DeploymentStep> deploymentSteps = ImmutableList.builder();
+        Environment environment = deployedApplication.getEnvironment();
+        if (TRUE.equals(environment.getProperty(ENV_RECHECK_CONDITIONS_PROPERTY))) {
+        	deploymentSteps.add(new CheckReleaseConditionsStep(
+        				environment.<Integer>getProperty(ENV_RECHECK_CONDITIONS_ORDER_PROPERTY), 
+        				deployedApplication));
+        }
+        return deploymentSteps.build();
     }
     
-    protected static Set<String> validateReleaseConditions(DeployedApplication deployedApplication) {
+    private static Set<String> getReleaseConditions(DeployedApplication deployedApplication) {
         Set<String> conditions = deployedApplication.getEnvironment().getProperty(ENV_RELEASE_CONDITIONS_PROPERTY);
-        if ((conditions == null) || (conditions.isEmpty())) {
-            return newHashSet();
-        }
+        return ((conditions == null) ? ImmutableSet.<String>of() : ImmutableSet.copyOf(conditions));
+	}
+
+	protected static Set<String> validateReleaseConditions(Set<String> conditions, 
+			Version deploymentPackage) {
         
         Set<String> violatedConditions = newHashSet();
         for (String conditionName : conditions) {
-            if (!TRUE.equals(deployedApplication.getVersion().getProperty(conditionName))) {
+            if (!TRUE.equals(deploymentPackage.getProperty(conditionName))) {
                 violatedConditions.add(conditionName);
             }
         }

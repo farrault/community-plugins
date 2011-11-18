@@ -27,16 +27,23 @@ import static com.xebialabs.deployit.test.support.TestUtils.createEnvironment;
 import static com.xebialabs.deployit.test.support.TestUtils.newInstance;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+
+import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.xebialabs.deployit.deployment.planner.DeltaSpecificationBuilder;
 import com.xebialabs.deployit.plugin.api.boot.PluginBooter;
+import com.xebialabs.deployit.plugin.api.deployment.execution.DeploymentStep;
+import com.xebialabs.deployit.plugin.api.deployment.planning.DefaultOrders;
 import com.xebialabs.deployit.plugin.api.deployment.specification.DeltaSpecification;
 import com.xebialabs.deployit.plugin.api.udm.Deployed;
 import com.xebialabs.deployit.plugin.api.udm.Environment;
 import com.xebialabs.deployit.plugin.test.yak.ci.YakServer;
+import com.xebialabs.deployit.plugins.releaseauth.step.CheckReleaseConditionsStep;
 
 /**
  * Unit tests for {@link CheckReleaseConditionsAreMet}
@@ -75,7 +82,31 @@ public class CheckReleaseConditionsAreMetTest {
         env.setProperty("releaseConditions", newHashSet("hasReleaseNotes"));
         DeltaSpecification deltaSpec = newDeltaSpec(env).build();
         deltaSpec.getDeployedApplication().getVersion().setProperty("hasReleaseNotes", TRUE);
-        CheckReleaseConditionsAreMet.validate(deltaSpec);
+        List<DeploymentStep> additionalSteps = CheckReleaseConditionsAreMet.validate(deltaSpec);
+        assertThat(additionalSteps.size(), is(0));
+    }
+    
+    @Test
+    public void doesNotAddStepForEnvironmentsWithoutReleaseConditions() {
+        Environment env = newEnvironment();
+        env.setProperty("recheckConditionsAtDeploymentTime", TRUE);
+        List<DeploymentStep> additionalSteps = CheckReleaseConditionsAreMet.validate(newDeltaSpec(env).build());
+        assertThat(additionalSteps.size(), is(0));
+    }
+    
+    @Test
+    public void addsCheckStepAtSpecifiedOrderIfRequested() {
+        Environment env = newEnvironment();
+        env.setProperty("releaseConditions", newHashSet("hasReleaseNotes"));
+        env.setProperty("recheckConditionsAtDeploymentTime", TRUE);
+        env.setProperty("recheckConditionsAtDeploymentTimeOrder", DefaultOrders.PRE_FLIGHT);
+        DeltaSpecification deltaSpec = newDeltaSpec(env).build();
+        deltaSpec.getDeployedApplication().getVersion().setProperty("hasReleaseNotes", TRUE);
+        List<DeploymentStep> additionalSteps = CheckReleaseConditionsAreMet.validate(deltaSpec);
+        assertThat(additionalSteps.size(), is(1));
+        DeploymentStep recheckConditionsStep = additionalSteps.get(0);
+        assertThat(recheckConditionsStep, is(CheckReleaseConditionsStep.class));
+        assertThat(recheckConditionsStep.getOrder(), is(DefaultOrders.PRE_FLIGHT));
     }
     
     private static Environment newEnvironment() {
