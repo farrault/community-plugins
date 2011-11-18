@@ -1,72 +1,64 @@
 package com.xebialabs.deployit.plugins.releaseauth.step;
 
-import static com.google.common.collect.Sets.newHashSet;
-import static com.xebialabs.deployit.plugins.releaseauth.planning.CheckReleaseConditionsAreMet.ENV_RELEASE_CONDITIONS_PROPERTY;
-import static java.lang.Boolean.TRUE;
+import static com.xebialabs.deployit.plugins.releaseauth.ConditionVerifier.validateReleaseConditions;
 import static java.lang.String.format;
 
 import java.util.Set;
 
 import com.xebialabs.deployit.plugin.api.deployment.execution.DeploymentExecutionContext;
 import com.xebialabs.deployit.plugin.api.deployment.execution.DeploymentStep;
-import com.xebialabs.deployit.plugin.api.udm.DeployedApplication;
+import com.xebialabs.deployit.plugin.api.udm.Version;
+import com.xebialabs.deployit.plugins.releaseauth.ConditionVerifier.VerificationResult;
+import com.xebialabs.deployit.plugins.releaseauth.ConditionVerifier.ViolatedCondition;
 
 @SuppressWarnings("serial")
 public class CheckReleaseConditionsStep implements DeploymentStep {
-
-	private final DeployedApplication deployedApplication;
+	private final Set<String> conditions;
+	private Version deploymentPackage;
 	private final int order;
 
-	public CheckReleaseConditionsStep(int order, DeployedApplication deployedApplication) {
-		this.deployedApplication = deployedApplication;
+	public CheckReleaseConditionsStep(int order, Set<String> conditions, 
+			Version deploymentPackage) {
+		this.conditions = conditions;
+		this.deploymentPackage = deploymentPackage;
 		this.order = order;
 	}
 
 	@Override
 	public Result execute(DeploymentExecutionContext ctx) throws Exception {
-        Set<String> violatedConditions = validateReleaseConditions(deployedApplication);
+        VerificationResult result = validateReleaseConditions(conditions, deploymentPackage);
         
-		if (violatedConditions.isEmpty()) {
-			ctx.logOutput("All release conditions verified");
-			return Result.Success;
-		} else {
-			ctx.logError(buildErrorMessage(deployedApplication, violatedConditions));
+        ctx.logOutput("Verifying release conditions:");
+        ctx.logOutput(buildValidatedConditionsMessage(result.getValidatedConditions()));
+        
+		if (result.failed()) {
+			ctx.logError(buildViolatedConditionsMessage(result.getViolatedConditions()));
 			return Result.Fail;
+		} else {
+			return Result.Success;
 		}
 	}
 
-    protected static Set<String> validateReleaseConditions(DeployedApplication deployedApplication) {
-        Set<String> conditions = deployedApplication.getEnvironment().getProperty(ENV_RELEASE_CONDITIONS_PROPERTY);
-        if ((conditions == null) || (conditions.isEmpty())) {
-            return newHashSet();
+	private static String buildValidatedConditionsMessage(Set<String> validatedConditions) {
+        StringBuilder message = new StringBuilder();
+        for (String conditionName : validatedConditions) {
+        	message.append(format("Condition '%s': OK%n", conditionName));
         }
-        
-        Set<String> violatedConditions = newHashSet();
-        for (String conditionName : conditions) {
-            if (!TRUE.equals(deployedApplication.getVersion().getProperty(conditionName))) {
-                violatedConditions.add(conditionName);
-            }
+		return message.toString();
+	}
+
+	private static String buildViolatedConditionsMessage(Set<ViolatedCondition<?>> violatedConditions) {
+        StringBuilder message = new StringBuilder();
+        for (ViolatedCondition<?> condition : violatedConditions) {
+        	message.append(format("Condition '%s': FAIL <<< (expected '%s' but was '%s')%n", 
+        			condition.name, condition.expectedValue, condition.actualValue));
         }
-        return violatedConditions;
-    }
-    
-    private static String buildErrorMessage(DeployedApplication deployedApplication,
-            Set<String> violatedConditions) {
-        StringBuilder errorMessage = new StringBuilder();
-        errorMessage.append("Cannot deploy '").append(deployedApplication.getName())
-        .append("' (version ").append(deployedApplication.getVersion().getVersion())
-        .append(") to '").append(deployedApplication.getEnvironment().getName())
-        .append("' as the following release conditions are not met:");
-        for (String violatedConditionName : violatedConditions) {
-            errorMessage.append("\n- '").append(violatedConditionName).append("'");
-        }
-        return errorMessage.toString();
-    }
-    
+		return message.toString();
+	}
+
 	@Override
 	public String getDescription() {
-		return format("Verify release authorization for deployment of '%s' to '%s'",
-				deployedApplication.getVersion(), deployedApplication.getEnvironment());
+		return format("Verify release authorization for deployment of '%s'", deploymentPackage);
 	}
 	
 	@Override

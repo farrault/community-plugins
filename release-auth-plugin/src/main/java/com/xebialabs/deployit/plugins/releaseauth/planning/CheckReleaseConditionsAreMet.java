@@ -20,7 +20,7 @@
  */
 package com.xebialabs.deployit.plugins.releaseauth.planning;
 
-import static com.google.common.collect.Sets.newHashSet;
+import static com.xebialabs.deployit.plugins.releaseauth.ConditionVerifier.validateReleaseConditions;
 import static java.lang.Boolean.TRUE;
 
 import java.util.List;
@@ -34,7 +34,8 @@ import com.xebialabs.deployit.plugin.api.deployment.planning.PostPlanProcessor;
 import com.xebialabs.deployit.plugin.api.deployment.specification.DeltaSpecification;
 import com.xebialabs.deployit.plugin.api.udm.DeployedApplication;
 import com.xebialabs.deployit.plugin.api.udm.Environment;
-import com.xebialabs.deployit.plugin.api.udm.Version;
+import com.xebialabs.deployit.plugins.releaseauth.ConditionVerifier.VerificationResult;
+import com.xebialabs.deployit.plugins.releaseauth.ConditionVerifier.ViolatedCondition;
 import com.xebialabs.deployit.plugins.releaseauth.step.CheckReleaseConditionsStep;
 
 public class CheckReleaseConditionsAreMet {
@@ -54,11 +55,11 @@ public class CheckReleaseConditionsAreMet {
         	return NO_STEPS;
         }
         
-		Set<String> violatedConditions = validateReleaseConditions(conditions, 
-				deployedApplication.getVersion());
-        if (!violatedConditions.isEmpty()) {
+        VerificationResult result = validateReleaseConditions(conditions, 
+        		deployedApplication.getVersion());
+        if (result.failed()) {
             throw new IllegalArgumentException(buildErrorMessage(
-                    deployedApplication, violatedConditions));
+                    deployedApplication, result.getViolatedConditions()));
         }
         
         Builder<DeploymentStep> deploymentSteps = ImmutableList.builder();
@@ -66,7 +67,7 @@ public class CheckReleaseConditionsAreMet {
         if (TRUE.equals(environment.getProperty(ENV_RECHECK_CONDITIONS_PROPERTY))) {
         	deploymentSteps.add(new CheckReleaseConditionsStep(
         				environment.<Integer>getProperty(ENV_RECHECK_CONDITIONS_ORDER_PROPERTY), 
-        				deployedApplication));
+        				conditions, deployedApplication.getVersion()));
         }
         return deploymentSteps.build();
     }
@@ -76,29 +77,16 @@ public class CheckReleaseConditionsAreMet {
         return ((conditions == null) ? ImmutableSet.<String>of() : ImmutableSet.copyOf(conditions));
 	}
 
-	protected static Set<String> validateReleaseConditions(Set<String> conditions, 
-			Version deploymentPackage) {
-        
-        Set<String> violatedConditions = newHashSet();
-        for (String conditionName : conditions) {
-            if (!TRUE.equals(deploymentPackage.getProperty(conditionName))) {
-                violatedConditions.add(conditionName);
-            }
-        }
-        return violatedConditions;
-    }
-    
     private static String buildErrorMessage(DeployedApplication deployedApplication,
-            Set<String> violatedConditions) {
+            Set<ViolatedCondition<?>> violatedConditions) {
         StringBuilder errorMessage = new StringBuilder();
         errorMessage.append("Cannot deploy '").append(deployedApplication.getName())
         .append("' (version ").append(deployedApplication.getVersion().getVersion())
         .append(") to '").append(deployedApplication.getEnvironment().getName())
         .append("' as the following release conditions are not met:");
-        for (String violatedConditionName : violatedConditions) {
-            errorMessage.append("\n- '").append(violatedConditionName).append("'");
+        for (ViolatedCondition<?> violatedCondition : violatedConditions) {
+            errorMessage.append("\n- '").append(violatedCondition.name).append("'");
         }
         return errorMessage.toString();
     }
-
 }
