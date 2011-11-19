@@ -13,6 +13,7 @@
 
 		<!-- synthetic properties used in tests must be defined in the type descriptor -->
     <type-modification type="udm.DeploymentPackage">
-        <property name="hasReleaseNotes" kind="boolean" default="false" category="Release Auth"/>
+        <property name="hasReleaseNotes" kind="boolean" default="false" category="Release Auth" />
+        <property name="signingOffManager" kind="string" category="Release Auth" />
     </type-modification>
 </synthetic>

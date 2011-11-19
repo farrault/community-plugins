@@ -50,7 +50,7 @@ public class CheckReleaseConditionsStep implements DeploymentStep {
 	private static String buildViolatedConditionsMessage(Set<ViolatedCondition<?>> violatedConditions) {
         StringBuilder message = new StringBuilder();
         for (ViolatedCondition<?> condition : violatedConditions) {
-        	message.append(format("Condition '%s': FAIL <<< (expected '%s' but was '%s')%n", 
+        	message.append(format("Condition '%s': FAIL <<< (expected %s but was '%s')%n", 
         			condition.name, condition.expectedValue, condition.actualValue));
         }
 		return message.toString();
