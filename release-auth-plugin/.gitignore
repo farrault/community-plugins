@@ -1,9 +1,0 @@
-# use glob syntax.
-syntax: glob
-build/
-target/
-.gradle
-.settings
-.classpath
-.project
-pom.xml
