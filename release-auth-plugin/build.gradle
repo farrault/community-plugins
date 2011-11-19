@@ -11,8 +11,8 @@ sourceEncoding = 'UTF-8'
 dependencies {
   compile "com.xebialabs.deployit:udm-plugin-api:${apiVersion}"
   testCompile 'junit:junit:4.8.2'
-  testCompile "com.xebialabs.deployit:udm-test-support:3.5.0"
-  testCompile 'com.xebialabs.deployit:yak-plugin:3.5.0'
+  testCompile "com.xebialabs.deployit:udm-test-support:${apiVersion}"
+  testCompile "com.xebialabs.deployit:yak-plugin:${apiVersion}"
   testCompile 'ch.qos.logback:logback-classic:0.9.24'
 }
 
