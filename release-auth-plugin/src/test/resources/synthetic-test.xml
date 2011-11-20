@@ -6,7 +6,7 @@
         <property name="releaseConditions" kind="set_of_string" required="false" category="Release Mgmt" description="Names of condition properties on the udm.DeploymentPackage that must to be met (i.e. set to 'true') for a deployment to this environment to be allowed"/>
         
         <!-- admin propertied -->
-        <property name="recheckConditionsAtDeploymentTime" kind="boolean" hidden="true" default="false" description="If set, release conditions are not just verified before planning begins, an equivalent step is also added to the task" />
+        <property name="recheckConditionsAtDeploymentTime" kind="boolean" required="false" hidden="true" default="false" description="If set, release conditions are not just verified before planning begins, an equivalent step is also added to the task" />
         <!-- DefaultOrders.PRE_FLIGHT - 4 -->
         <property name="recheckConditionsAtDeploymentTimeOrder" kind="integer" hidden="true" default="-4" />
     </type-modification>
