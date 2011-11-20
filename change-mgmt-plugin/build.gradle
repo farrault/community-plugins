@@ -1,51 +1,78 @@
-defaultTasks 'build'
-
 apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'eclipse'
+apply plugin: 'maven'
 
 group = 'com.xebialabs.deployit.community'
-version = '1.0-SNAPSHOT'
+apiVersion = '3.6.0'
+version = "${apiVersion}_1"
 
 sourceCompatibility = 1.6
-targetCompatibility = 1.6
 sourceEncoding = 'UTF-8'
+
+dependencies {
+  compile "${group}:release-auth-plugin:${apiVersion}_1"
+  compile "com.xebialabs.deployit.plugins:generic-plugin:${apiVersion}"
+  testCompile 'junit:junit:4.8.2'
+  testCompile "com.xebialabs.deployit:udm-test-support:${apiVersion}"
+  testCompile "com.xebialabs.deployit:yak-plugin:${apiVersion}"
+  testCompile 'ch.qos.logback:logback-classic:0.9.24'
+}
 
 repositories {
 	mavenLocal()
-	mavenCentral()
-	mavenRepo urls: "${nexusBaseUrl}/repositories/releases"
-}
-
-configurations {
-	compile {
-		transitive = false
-	}
-}
-
-dependencies {
-	compile "org.slf4j:slf4j-api:1.6.3"
-	compile "com.xebialabs.deployit:udm-plugin-api:3.5.1.2"
-	compile "com.xebialabs.deployit.plugins:generic-plugin:3.5.1.2"
-	compile "com.google.guava:guava:10.0.1"
-	compile "${group}:relauth-plugin:3.5-SNAPSHOT"
-	testCompile 'junit:junit:4.10'
-	testCompile 'com.xebialabs.deployit:udm-test-support:3.5.1.2'
-	testCompile 'ch.qos.logback:logback-classic:0.9.30'
-	testRuntime "ch.qos.logback:logback-classic:0.9.30"
 }
 
 task sourcesJar(type: Jar) {
-    from sourceSets.main.allSource
-    classifier = 'sources'
+  classifier = 'sources'
+  from sourceSets.main.allSource  
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = "javadoc"
-    from javadoc.destinationDir
+  classifier = 'javadoc'
+  from javadoc.destinationDir
 }
 
 artifacts {
-    archives sourcesJar, javadocJar
+  archives sourcesJar, javadocJar
 }
 
+afterEvaluate { eachProject ->
+  Set testTasks = eachProject.tasks.withType(Test).all
+  
+  testTasks.each { testTask ->
+    testTask.onlyIf { !project.hasProperty('skipTests') }
+    testTask.afterSuite { descriptor, result ->
+      if (descriptor.className != null) {
+        println "${descriptor.className}: ${result.testCount} tests; failed: ${result.failedTestCount}; skipped: ${result.skippedTestCount}"
+      } else if (descriptor.className == null && descriptor.parent == null) {
+        println "Total: ${result.testCount} tests; failed: ${result.failedTestCount}; skipped: ${result.skippedTestCount}"
+      }
+    }
+  }
+}
+
+task generatePom << {
+  pom { 
+    project { 
+      build { 
+        plugins {
+          plugin {
+            artifactId 'maven-compiler-plugin'
+            version '2.3'
+            configuration {
+              encoding = sourceEncoding 
+              source = "${sourceCompatibility}".toString()
+              target = "${sourceCompatibility}".toString()
+            }
+          }
+          plugin {
+            artifactId 'maven-resources-plugin'
+            version '2.3'
+            configuration {
+              encoding = sourceEncoding
+            }
+          }
+        } 
+      } 
+    } 
+  }.writeTo('pom.xml')
+}

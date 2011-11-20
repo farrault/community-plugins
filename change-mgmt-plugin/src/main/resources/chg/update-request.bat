@@ -1,0 +1,1 @@
+@echo Setting ${deployed.requestId} to 'COMPLETED' in ${deployed.container.name}

@@ -29,9 +29,13 @@ import com.xebialabs.deployit.plugin.generic.deployed.ExecutedScript;
 @SuppressWarnings("serial")
 @Metadata(virtual = true, description = "An Change ticket in a chg.ChangeManager")
 public class ChangeTicket extends ExecutedScript<Resource> {
-
-	@Override
-	public void executeDestroy(DeploymentPlanningContext ctx, Delta d) {
-        // do nothing - destroy not supported
-	}
+    private static final String UPDATE_SCRIPT_PROPERTY = "updateScript";
+    private static final String UPDATE_ORDER_PROPERTY = "updateOrder";
+    
+    @Override
+    public void executeCreate(DeploymentPlanningContext ctx, Delta d) {
+        super.executeCreate(ctx, d);
+        addStep(ctx, this.<Integer>getProperty(UPDATE_ORDER_PROPERTY), 
+                this.<String>getProperty(UPDATE_SCRIPT_PROPERTY), "Update");
+    }
 }
