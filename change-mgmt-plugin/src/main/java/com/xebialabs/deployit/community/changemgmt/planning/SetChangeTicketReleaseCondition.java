@@ -18,7 +18,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package com.xebialabs.deployit.plugins.changemgmt.planning;
+package com.xebialabs.deployit.community.changemgmt.planning;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.xebialabs.deployit.community.releaseauth.planning.CheckReleaseConditionsAreMet.ENV_RELEASE_CONDITIONS_PROPERTY;
@@ -33,6 +33,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.xebialabs.deployit.community.changemgmt.deployed.ChangeTicket;
 import com.xebialabs.deployit.plugin.api.deployment.execution.DeploymentStep;
 import com.xebialabs.deployit.plugin.api.deployment.planning.PrePlanProcessor;
 import com.xebialabs.deployit.plugin.api.deployment.specification.Delta;
@@ -44,7 +45,6 @@ import com.xebialabs.deployit.plugin.api.reflect.Types;
 import com.xebialabs.deployit.plugin.api.udm.DeployedApplication;
 import com.xebialabs.deployit.plugin.api.udm.DeploymentPackage;
 import com.xebialabs.deployit.plugin.api.udm.Version;
-import com.xebialabs.deployit.plugins.changemgmt.deployed.ChangeTicket;
 
 public class SetChangeTicketReleaseCondition {
     @VisibleForTesting

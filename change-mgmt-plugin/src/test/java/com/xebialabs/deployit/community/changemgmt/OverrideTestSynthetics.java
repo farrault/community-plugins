@@ -1,4 +1,4 @@
-package com.xebialabs.deployit.plugins.changemgmt;
+package com.xebialabs.deployit.community.changemgmt;
 
 import static java.lang.String.format;
 
