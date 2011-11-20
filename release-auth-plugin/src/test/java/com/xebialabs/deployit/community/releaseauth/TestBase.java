@@ -1,4 +1,4 @@
-package com.xebialabs.deployit.plugins.releaseauth;
+package com.xebialabs.deployit.community.releaseauth;
 
 import org.junit.BeforeClass;
 

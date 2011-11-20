@@ -1,15 +1,15 @@
-package com.xebialabs.deployit.plugins.releaseauth.step;
+package com.xebialabs.deployit.community.releaseauth.step;
 
-import static com.xebialabs.deployit.plugins.releaseauth.ConditionVerifier.validateReleaseConditions;
+import static com.xebialabs.deployit.community.releaseauth.ConditionVerifier.validateReleaseConditions;
 import static java.lang.String.format;
 
 import java.util.Set;
 
+import com.xebialabs.deployit.community.releaseauth.ConditionVerifier.VerificationResult;
+import com.xebialabs.deployit.community.releaseauth.ConditionVerifier.ViolatedCondition;
 import com.xebialabs.deployit.plugin.api.deployment.execution.DeploymentExecutionContext;
 import com.xebialabs.deployit.plugin.api.deployment.execution.DeploymentStep;
 import com.xebialabs.deployit.plugin.api.udm.Version;
-import com.xebialabs.deployit.plugins.releaseauth.ConditionVerifier.VerificationResult;
-import com.xebialabs.deployit.plugins.releaseauth.ConditionVerifier.ViolatedCondition;
 
 @SuppressWarnings("serial")
 public class CheckReleaseConditionsStep implements DeploymentStep {

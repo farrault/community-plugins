@@ -18,7 +18,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package com.xebialabs.deployit.plugins.releaseauth.planning;
+package com.xebialabs.deployit.community.releaseauth.planning;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static com.xebialabs.deployit.deployment.planner.DeltaSpecificationBuilder.newSpecification;
@@ -34,6 +34,9 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.xebialabs.deployit.community.releaseauth.TestBase;
+import com.xebialabs.deployit.community.releaseauth.planning.CheckReleaseConditionsAreMet;
+import com.xebialabs.deployit.community.releaseauth.step.CheckReleaseConditionsStep;
 import com.xebialabs.deployit.deployment.planner.DeltaSpecificationBuilder;
 import com.xebialabs.deployit.plugin.api.deployment.execution.DeploymentStep;
 import com.xebialabs.deployit.plugin.api.deployment.planning.DefaultOrders;
@@ -41,8 +44,6 @@ import com.xebialabs.deployit.plugin.api.deployment.specification.DeltaSpecifica
 import com.xebialabs.deployit.plugin.api.udm.Deployed;
 import com.xebialabs.deployit.plugin.api.udm.Environment;
 import com.xebialabs.deployit.plugin.test.yak.ci.YakServer;
-import com.xebialabs.deployit.plugins.releaseauth.TestBase;
-import com.xebialabs.deployit.plugins.releaseauth.step.CheckReleaseConditionsStep;
 
 /**
  * Unit tests for {@link CheckReleaseConditionsAreMet}

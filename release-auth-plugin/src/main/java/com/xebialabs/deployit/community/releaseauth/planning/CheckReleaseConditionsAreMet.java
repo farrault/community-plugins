@@ -18,9 +18,9 @@
  * limitations under the License.
  * ====================================================================
  */
-package com.xebialabs.deployit.plugins.releaseauth.planning;
+package com.xebialabs.deployit.community.releaseauth.planning;
 
-import static com.xebialabs.deployit.plugins.releaseauth.ConditionVerifier.validateReleaseConditions;
+import static com.xebialabs.deployit.community.releaseauth.ConditionVerifier.validateReleaseConditions;
 import static java.lang.Boolean.TRUE;
 
 import java.util.List;
@@ -29,14 +29,14 @@ import java.util.Set;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
+import com.xebialabs.deployit.community.releaseauth.ConditionVerifier.VerificationResult;
+import com.xebialabs.deployit.community.releaseauth.ConditionVerifier.ViolatedCondition;
+import com.xebialabs.deployit.community.releaseauth.step.CheckReleaseConditionsStep;
 import com.xebialabs.deployit.plugin.api.deployment.execution.DeploymentStep;
 import com.xebialabs.deployit.plugin.api.deployment.planning.PostPlanProcessor;
 import com.xebialabs.deployit.plugin.api.deployment.specification.DeltaSpecification;
 import com.xebialabs.deployit.plugin.api.udm.DeployedApplication;
 import com.xebialabs.deployit.plugin.api.udm.Environment;
-import com.xebialabs.deployit.plugins.releaseauth.ConditionVerifier.VerificationResult;
-import com.xebialabs.deployit.plugins.releaseauth.ConditionVerifier.ViolatedCondition;
-import com.xebialabs.deployit.plugins.releaseauth.step.CheckReleaseConditionsStep;
 
 public class CheckReleaseConditionsAreMet {
     public static final String ENV_RELEASE_CONDITIONS_PROPERTY = "releaseConditions";

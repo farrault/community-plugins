@@ -1,4 +1,4 @@
-package com.xebialabs.deployit.plugins.releaseauth;
+package com.xebialabs.deployit.community.releaseauth;
 
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.xebialabs.deployit.test.support.TestUtils.createDeploymentPackage;
@@ -12,9 +12,10 @@ import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.xebialabs.deployit.community.releaseauth.ConditionVerifier;
+import com.xebialabs.deployit.community.releaseauth.ConditionVerifier.VerificationResult;
+import com.xebialabs.deployit.community.releaseauth.ConditionVerifier.ViolatedCondition;
 import com.xebialabs.deployit.plugin.api.udm.Version;
-import com.xebialabs.deployit.plugins.releaseauth.ConditionVerifier.VerificationResult;
-import com.xebialabs.deployit.plugins.releaseauth.ConditionVerifier.ViolatedCondition;
 
 /**
  * Unit tests for {@link ConditionVerifier}

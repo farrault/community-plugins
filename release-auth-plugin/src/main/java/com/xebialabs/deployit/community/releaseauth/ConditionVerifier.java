@@ -1,4 +1,4 @@
-package com.xebialabs.deployit.plugins.releaseauth;
+package com.xebialabs.deployit.community.releaseauth;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.xebialabs.deployit.plugin.api.reflect.PropertyKind.BOOLEAN;
