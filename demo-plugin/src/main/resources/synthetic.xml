@@ -1,0 +1,46 @@
+<synthetic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns="http://www.xebialabs.com/deployit/synthetic"
+           xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd">
+
+    <!-- Infrastructure Containers -->
+    <type type="demo.Server" extends="generic.Container" description="Demo server on host.">
+        <property name="home" description="Home directory for the demo server"/>
+        <!-- inherited hidden -->
+        <property name="startScript" default="demo/start-server" hidden="true"/>
+        <property name="stopScript" default="demo/stop-server" hidden="true"/>
+        <property name="inspectScript" default="demo/inspect-server" hidden="true"/>
+        <!-- control tasks -->
+        <method name="start" description="Start the demo server"/>
+        <method name="stop" description="Stop the demo server"/>
+    </type>
+
+    <type type="demo.Folder" extends="generic.NestedContainer"
+          description="Models a root folder on a demo server in Deployit's Infrastructure.">
+        <property name="server" as-containment="true" kind="ci" referenced-type="demo.Server"/>
+        <property name="permissions" kind="string"/>
+        <property name="directory" kind="string"/>
+        <property name="inspectScript" default="demo/inspect-folder" hidden="true"/>
+    </type>
+
+    <!-- Deployeds and generated Deployables -->
+
+    <type type="demo.WarModule" extends="generic.CopiedArtifact" deployable-type="jee.War"
+          container-type="demo.Folder" description="War deployed to a demo folder">
+        <!--inherited hidden -->
+        <property name="targetDirectory" default="${deployed.container.directory}" hidden="true"/>
+        <property name="targetFile" default="${deployed.name}.war" hidden="true"/>
+        <property name="createOrder" kind="integer" default="70" hidden="true"/>
+        <property name="destroyOrder" kind="integer" default="30" hidden="true"/>
+        <property name="restartRequired" kind="boolean" required="false" default="false" hidden="true"/>
+    </type>
+
+    <type type="demo.EarModule" extends="generic.CopiedArtifact" deployable-type="jee.Ear"
+          container-type="demo.Folder" description="Ear deployed to a demo folder">
+        <!--inherited hidden -->
+        <property name="targetDirectory" default="${deployed.container.name}" hidden="true"/>
+        <property name="targetFile" default="${deployed.name}.ear" hidden="true"/>
+        <property name="createOrder" kind="integer" default="70" hidden="true"/>
+        <property name="destroyOrder" kind="integer" default="30" hidden="true"/>
+        <property name="restartRequired" kind="boolean" required="false" default="false" hidden="true"/>
+    </type>
+</synthetic>
