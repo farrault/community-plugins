@@ -116,7 +116,7 @@ public class SentEmail extends ProcessedTemplate<Resource> {
 
     @Override
 	public String getDescription(String verb) {
-        return format("%s email '%s' to: %s (cc: '%s', bcc: '%s')", verb, 
+        return format("%s email '%s' to: '%s' (cc: '%s', bcc: '%s')", verb, 
                 getProperty(SUBJECT_PROPERTY), 
                 nullToEmpty(this.<String>getProperty(TO_PROPERTY)), 
                 nullToEmpty(this.<String>getProperty(CC_PROPERTY)), 
