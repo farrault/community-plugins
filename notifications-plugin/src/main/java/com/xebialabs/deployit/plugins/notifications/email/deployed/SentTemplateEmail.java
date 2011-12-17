@@ -20,9 +20,9 @@
  */
 package com.xebialabs.deployit.plugins.notifications.email.deployed;
 
-import com.xebialabs.deployit.plugin.api.deployment.planning.DeploymentPlanningContext;
 import com.xebialabs.deployit.plugin.api.udm.Metadata;
 import com.xebialabs.deployit.plugins.notifications.email.ci.MailServer;
+import com.xebialabs.deployit.plugins.notifications.email.step.EmailSendStep;
 import com.xebialabs.deployit.plugins.notifications.email.step.TemplateEmailSendStep;
 
 @SuppressWarnings("serial")
@@ -30,10 +30,10 @@ import com.xebialabs.deployit.plugins.notifications.email.step.TemplateEmailSend
 public class SentTemplateEmail extends SentEmail {
 
     @Override
-    public void executeCreate(DeploymentPlanningContext ctx) {
-        ctx.addStep(new TemplateEmailSendStep(getCreateOrder(), getDescription(getCreateVerb()), 
+    protected EmailSendStep getEmailSendStep() {
+         return new TemplateEmailSendStep(getCreateOrder(), getDescription(getCreateVerb()), 
                 (MailServer) getContainer(), getFromAddress(), getToAddresses(), 
                 getCcAddresses(), getBccAddresses(), getSubject(), 
-                getDeployedAsFreeMarkerContext(), getTemplate()));
+                getDeployedAsFreeMarkerContext(), getTemplate());
     }
 }
