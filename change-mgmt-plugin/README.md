@@ -6,7 +6,7 @@ A Deployit 3.6 community plugin that supports validation of Change Tickets in an
 Installation
 ============
 
-Place the 'change-mgmt-plugin-&lt;version&gt;.jar' file into your _SERVER_HOME/plugins_ directory. 
+Place the 'change-mgmt-plugin-&lt;version&gt;.jar' file into your SERVER_HOME/plugins_ directory. 
 
 The change-mgmt-plugin requires the [release-auth-plugin](https://github.com/xebialabs/community-plugins/tree/master/release-auth-plugin) (minimum version: 3.6.0_1).
 
