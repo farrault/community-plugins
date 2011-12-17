@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<synthetic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns="http://www.xebialabs.com/deployit/synthetic"
+           xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd">
+    
+    <type type="cmd2.DeployedCommandFolder" extends="generic.ExecutedScriptWithDerivedArtifact" deployable-type="cmd2.CommandFolder">
+      <generate-deployable type="cmd2.CommandFolder" extends="generic.Folder" />
+
+      <!-- list_of_string not supported yet :-( -->
+      <property name="command" description="The command(s) to run. Need to be correctly formatted and escaped for the target platform" />
+      <property name="undoCommand" required="false" description="If set, the command(s) to run to undo the execution of the command. May reference the same files as 'command'" />
+      <property name="envVars" kind="map_string_string" required="false" />
+      <!-- admin properties -->
+      <property name="createScript" hidden="true" default="cmd2/CommandRunner" />
+      <property name="createVerb" hidden="true" default="Run" />
+      <property name="destroyScript" hidden="true" default="cmd2/UndoCommandRunner" />
+      <property name="destroyVerb" hidden="true" default="Undo" />
+    </type>
+
+    <type type="cmd2.DeployedCommand" extends="generic.ExecutedScript" deployable-type="cmd2.Command">
+      <generate-deployable type="cmd2.Command" extends="generic.Resource" />
+
+      <!-- list_of_string not supported yet :-( -->
+      <property name="command" description="The command(s) to run. Needs to be correctly formatted and escaped for the target platform" />
+      <property name="undoCommand" required="false" description="If set, the command(s) to run to undo the execution of the command. May reference the same files as 'command'" />
+      <property name="envVars" kind="map_string_string" required="false" />
+      <!-- admin properties -->
+      <property name="createScript" hidden="true" default="cmd2/CommandRunner" />
+      <property name="createVerb" hidden="true" default="Run" />
+      <property name="destroyScript" hidden="true" default="cmd2/UndoCommandRunner" />
+      <property name="destroyVerb" hidden="true" default="Run" />
+    </type>
+    
+</synthetic>
