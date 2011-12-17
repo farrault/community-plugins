@@ -22,8 +22,11 @@ package com.xebialabs.deployit.plugins.notifications.email.deployed;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.nullToEmpty;
+import static com.xebialabs.deployit.plugin.api.reflect.DescriptorRegistry.getDescriptor;
+import static java.lang.Boolean.TRUE;
 import static java.lang.String.format;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -32,9 +35,12 @@ import com.xebialabs.deployit.plugin.api.udm.DeployedApplication;
 import com.xebialabs.deployit.plugin.api.udm.Metadata;
 import com.xebialabs.deployit.plugin.generic.ci.Resource;
 import com.xebialabs.deployit.plugin.generic.deployed.ProcessedTemplate;
+import com.xebialabs.deployit.plugin.generic.step.ScriptExecutionStep;
+import com.xebialabs.deployit.plugin.overthere.Host;
 import com.xebialabs.deployit.plugins.notifications.email.ci.MailServer;
 import com.xebialabs.deployit.plugins.notifications.email.step.EmailSendStep;
 import com.xebialabs.deployit.plugins.notifications.email.step.LiteralEmailSendStep;
+import com.xebialabs.overthere.OperatingSystemFamily;
 
 @SuppressWarnings("serial")
 @Metadata(virtual = true, description = "An email sent via a notify.MailServer")
@@ -45,13 +51,28 @@ public class SentEmail extends ProcessedTemplate<Resource> {
     private static final String CC_PROPERTY = "cc";
     private static final String BCC_PROPERTY = "bcc";
     private static final String BODY_PROPERTY = "body";
+    private static final String AWAIT_CONFIRMATION_PROPERTY = "awaitConfirmation";
+    private static final String AWAIT_CONFIRMATION_SCRIPT_PROPERTY = "awaitConfirmationScript";
     private static final String ADDRESS_SEPARATOR = ",";
     
+    private final Host localhost;
+
     private DeployedApplication deployedApplication;
+
+    public SentEmail() {
+    	localhost = getDescriptor("overthere.LocalHost").newInstance();
+    	localhost.setOs(OperatingSystemFamily.getLocalHostOperatingSystemFamily());
+    }
     
     @Override
     public void executeCreate(DeploymentPlanningContext ctx) {
         ctx.addStep(getEmailSendStep());
+        if (TRUE.equals(this.<Boolean>getProperty(AWAIT_CONFIRMATION_PROPERTY))) {
+        	ctx.addStep(new ScriptExecutionStep(getCreateOrder() + 2, 
+                    this.<String>getProperty(AWAIT_CONFIRMATION_SCRIPT_PROPERTY),
+                    localhost, Collections.<String, Object>singletonMap("deployed", this), 
+                    format("Await confirmation of '%s'", getName())));
+        }
     }
 
     // override me!
