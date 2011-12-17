@@ -41,7 +41,7 @@ public class GeneratePreAndPostEmailsTest extends TestBase {
     @Test
     public void generatesPreEmail() {
         Environment env = newEnvironment();
-        env.putSyntheticProperty("sendDeploymentStartNotification", true);
+        env.setProperty("sendDeploymentStartNotification", true);
         List<DeploymentStep> steps = GeneratePreAndPostEmails.generatePreEmails(
                 newDeltaSpec(env).build());
         assertThat(steps.size(), is(1));
@@ -51,7 +51,7 @@ public class GeneratePreAndPostEmailsTest extends TestBase {
     @Test
     public void generatesPostEmail() {
         Environment env = newEnvironment();
-        env.putSyntheticProperty("sendDeploymentEndNotification", true);
+        env.setProperty("sendDeploymentEndNotification", true);
         List<DeploymentStep> steps = GeneratePreAndPostEmails.generatePostEmails(
                 newDeltaSpec(env).build());
         assertThat(steps.size(), is(1));

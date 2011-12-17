@@ -33,7 +33,7 @@ public class TemplateEmailSendStep extends EmailSendStep {
     }
 
     // adapted from TemplateArtifactCopyStep
-    protected String evaluateTemplate(String templatePath, Map<String, Object> vars) {
+    public String evaluateTemplate(String templatePath, Map<String, Object> vars) {
         Configuration cfg = ConfigurationHolder.getConfiguration();
         try {
             Template template = cfg.getTemplate(templatePath);

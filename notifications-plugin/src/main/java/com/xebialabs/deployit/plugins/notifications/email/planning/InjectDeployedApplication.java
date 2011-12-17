@@ -21,6 +21,7 @@
 package com.xebialabs.deployit.plugins.notifications.email.planning;
 
 import static com.google.common.collect.Iterables.filter;
+import static com.xebialabs.deployit.plugin.api.util.Predicates.deltaOf;
 
 import java.util.List;
 
@@ -33,12 +34,11 @@ import com.xebialabs.deployit.plugin.api.deployment.specification.DeltaSpecifica
 import com.xebialabs.deployit.plugin.api.reflect.Type;
 import com.xebialabs.deployit.plugin.api.udm.Deployed;
 import com.xebialabs.deployit.plugin.api.udm.DeployedApplication;
-import com.xebialabs.deployit.plugins.generic.ext.planning.SingleTypeContributor.IsSubtypeOf;
 import com.xebialabs.deployit.plugins.notifications.email.deployed.SentEmail;
 
 public class InjectDeployedApplication {
     private static final Predicate<Delta> IS_SENT_EMAIL = 
-        new IsSubtypeOf(Type.valueOf(SentEmail.class));
+        deltaOf(Type.valueOf(SentEmail.class));
     private static final List<DeploymentStep> NO_STEPS = ImmutableList.of();
     
     @PrePlanProcessor

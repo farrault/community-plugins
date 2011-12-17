@@ -11,10 +11,8 @@
         <property name="Bcc" required="false" description="Comma-separated list of email addresses (format 'user@domain' or 'Name &lt;user@domain&gt;')" />
         <property name="Subject" />
         <property name="Body" size="large" description="Use ${deployed.app.&lt;prop&gt;} to refer to property 'prop' of the deployed application" />
-        
         <!-- unhide so users can choose -->
         <property name="createOrder" kind="integer" hidden="false" default="1" description="Determines when in the step sequence this email will be sent. Lower numbers are earlier in the sequence" />
-        
         <!-- admin properties -->
         <property name="targetFile" hidden="true" default="UNUSED" />
         <property name="targetDirectory" hidden="true" default="UNUSED" />
@@ -33,7 +31,7 @@
         <property name="template" hidden="true" default="notify/email/${deployed.type}.ftl" />
     </type-modification>
 
-    <!-- workaround for http://.../DEPLOYITPB-xxxx -->
+    <!-- workaround for http://tech.xebialabs.com/jira/browse/DEPLOYITPB-2236 -->
     <type type="notify.SentTemplateEmail2" extends="notify.SentTemplateEmail" deployable-type="notify.TemplateEmailDraft"
             container-type="notify.MailServer">
         <generate-deployable type="notify.TemplateEmailDraft" extends="generic.Resource" />

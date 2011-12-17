@@ -31,13 +31,13 @@ import com.xebialabs.deployit.plugin.api.deployment.planning.DeploymentPlanningC
 import com.xebialabs.deployit.plugin.api.udm.DeployedApplication;
 import com.xebialabs.deployit.plugin.api.udm.Metadata;
 import com.xebialabs.deployit.plugin.generic.ci.Resource;
-import com.xebialabs.deployit.plugins.generic.ext.deployed.TemplatePropertyResolvingProcessedTemplate;
+import com.xebialabs.deployit.plugin.generic.deployed.ProcessedTemplate;
 import com.xebialabs.deployit.plugins.notifications.email.ci.MailServer;
 import com.xebialabs.deployit.plugins.notifications.email.step.LiteralEmailSendStep;
 
 @SuppressWarnings("serial")
 @Metadata(virtual = true, description = "An email sent via a notify.MailServer")
-public class SentEmail extends TemplatePropertyResolvingProcessedTemplate<Resource> {
+public class SentEmail extends ProcessedTemplate<Resource> {
     private static final String SUBJECT_PROPERTY = "Subject";
     private static final String FROM_PROPERTY = "From";
     private static final String TO_PROPERTY = "To";
@@ -53,7 +53,7 @@ public class SentEmail extends TemplatePropertyResolvingProcessedTemplate<Resour
         ctx.addStep(new LiteralEmailSendStep(getCreateOrder(), getDescription(getCreateVerb()), 
                 (MailServer) getContainer(), getFromAddress(), getToAddresses(), 
                 getCcAddresses(), getBccAddresses(), getSubject(), 
-                resolveExpression(this.<String>getSyntheticProperty(BODY_PROPERTY))));
+                resolveExpression(this.<String>getProperty(BODY_PROPERTY))));
     }
 
     @Override
@@ -62,23 +62,23 @@ public class SentEmail extends TemplatePropertyResolvingProcessedTemplate<Resour
     }
     
     protected String getSubject() {
-        return nullToEmpty(this.<String>getSyntheticProperty(SUBJECT_PROPERTY));
+        return nullToEmpty(this.<String>getProperty(SUBJECT_PROPERTY));
     }
     
     protected String getFromAddress() {
-        return getSyntheticProperty(FROM_PROPERTY);
+        return getProperty(FROM_PROPERTY);
     }
     
     protected List<String> getToAddresses() {
-        return splitAddresses(this.<String>getSyntheticProperty(TO_PROPERTY));
+        return splitAddresses(this.<String>getProperty(TO_PROPERTY));
     }
 
     protected List<String> getCcAddresses() {
-        return splitAddresses(this.<String>getSyntheticProperty(CC_PROPERTY));
+        return splitAddresses(this.<String>getProperty(CC_PROPERTY));
     }
     
     protected List<String> getBccAddresses() {
-        return splitAddresses(this.<String>getSyntheticProperty(BCC_PROPERTY));
+        return splitAddresses(this.<String>getProperty(BCC_PROPERTY));
     }
     
     private static List<String> splitAddresses(String commaSeparatedAddresses) {
@@ -88,12 +88,12 @@ public class SentEmail extends TemplatePropertyResolvingProcessedTemplate<Resour
     }
 
     @Override
-    protected String getDescription(String verb) {
+	public String getDescription(String verb) {
         return format("%s email '%s' to: %s (cc: %s, bcc: %s)", verb, 
-                getSyntheticProperty(SUBJECT_PROPERTY), 
-                nullToEmpty(this.<String>getSyntheticProperty(TO_PROPERTY)), 
-                nullToEmpty(this.<String>getSyntheticProperty(CC_PROPERTY)), 
-                nullToEmpty(this.<String>getSyntheticProperty(BCC_PROPERTY)));
+                getProperty(SUBJECT_PROPERTY), 
+                nullToEmpty(this.<String>getProperty(TO_PROPERTY)), 
+                nullToEmpty(this.<String>getProperty(CC_PROPERTY)), 
+                nullToEmpty(this.<String>getProperty(BCC_PROPERTY)));
     }
 
     // short name for user convenience

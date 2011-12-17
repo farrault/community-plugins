@@ -6,7 +6,7 @@ A Deployit 3.5 plugin that supports notifications (currently, via email only).
 Installation
 ============
 
-Place the 'notifiacations-plugin-&lt;version&gt;.jar' file into your SERVER_HOME/plugins directory.
+Place the 'notifications-plugin-&lt;version&gt;.jar' file into your SERVER_HOME/plugins directory.
 
 Also requires 'simple-java-mail-1.8.jar' in the SERVER_HOME/lib directory. This library is available from [Maven Central](http://search.maven.org/#search|ga|1|simple-java-mail-1.8).
 

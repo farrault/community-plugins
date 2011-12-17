@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Sets.filter;
 import static com.xebialabs.deployit.plugin.api.reflect.DescriptorRegistry.getDescriptor;
-import static com.xebialabs.deployit.plugin.api.reflect.Types.isSubtypeOf;
+import static com.xebialabs.deployit.plugin.api.util.Predicates.subtypeOf;
 import static java.lang.Boolean.TRUE;
 import static java.util.Arrays.asList;
 
@@ -69,8 +69,7 @@ public class GeneratePreAndPostEmails {
     protected static List<DeploymentStep> generateEmails(DeployedApplication deployedApplication, 
             String triggerProperty, Type sentEmailType) {
         // property may also be null
-        if (!TRUE.equals(deployedApplication.getEnvironment()
-                .getSyntheticProperty(triggerProperty))) {
+        if (!TRUE.equals(deployedApplication.getEnvironment().getProperty(triggerProperty))) {
             return NO_STEPS;
         }
 
@@ -92,7 +91,7 @@ public class GeneratePreAndPostEmails {
                 new Predicate<Container>() {
                     @Override
                     public boolean apply(Container input) {
-                        return isSubtypeOf(MAIL_SERVER_TYPE, input.getType());
+                        return subtypeOf(MAIL_SERVER_TYPE).apply(input.getType());
                     }
                 });
         checkArgument(mailServers.size() == 1, "Cannot send pre- or post-deployment notification emails unless there is exactly 1 'notify.MailServer' in the target environment");
@@ -126,6 +125,11 @@ public class GeneratePreAndPostEmails {
         public void setAttribute(String name, Object value) {
             throw new UnsupportedOperationException("TODO Auto-generated method stub");
         }
+
+		@Override
+		public DeployedApplication getDeployedApplication() {
+			throw new UnsupportedOperationException("TODO Auto-generated method stub");
+		}
         
     }
 }

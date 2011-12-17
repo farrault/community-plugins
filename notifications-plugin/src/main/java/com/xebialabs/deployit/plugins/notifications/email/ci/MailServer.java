@@ -36,10 +36,10 @@ public class MailServer extends Container {
     private static final String SMTP_TRANSPORT_PROPERTY = "smtpTransport";
     
     public Mailer getMailer() {
-        return new Mailer(this.<String>getSyntheticProperty(SMTP_HOST_PROPERTY),
-                this.<Integer>getSyntheticProperty(SMTP_PORT_PROPERTY),
-                this.<String>getSyntheticProperty(SMTP_USERNAME_PROPERTY),
-                this.<String>getSyntheticProperty(SMTP_PASSWORD_PROPERTY),
-                this.<TransportStrategy>getSyntheticProperty(SMTP_TRANSPORT_PROPERTY));
+        return new Mailer(this.<String>getProperty(SMTP_HOST_PROPERTY),
+                this.<Integer>getProperty(SMTP_PORT_PROPERTY),
+                this.<String>getProperty(SMTP_USERNAME_PROPERTY),
+                this.<String>getProperty(SMTP_PASSWORD_PROPERTY),
+                this.<TransportStrategy>getProperty(SMTP_TRANSPORT_PROPERTY));
     }
 }
