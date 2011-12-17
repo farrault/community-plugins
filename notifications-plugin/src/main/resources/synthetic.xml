@@ -5,12 +5,12 @@
 
     <type-modification type="notify.SentEmail">
         <!-- add defaults as required -->
-        <property name="From" description="Comma-separated list of email addresses (format 'user@domain' or 'Name &lt;user@domain&gt;')" />
-        <property name="To" description="Comma-separated list of email addresses (format 'user@domain' or 'Name &lt;user@domain&gt;')" />
-        <property name="Cc" required="false" description="Comma-separated list of email addresses (format 'user@domain' or 'Name &lt;user@domain&gt;')" />
-        <property name="Bcc" required="false" description="Comma-separated list of email addresses (format 'user@domain' or 'Name &lt;user@domain&gt;')" />
-        <property name="Subject" />
-        <property name="Body" size="large" description="Use ${deployed.app.&lt;prop&gt;} to refer to property 'prop' of the deployed application" />
+        <property name="from" description="Comma-separated list of email addresses (format 'user@domain' or 'Name &lt;user@domain&gt;')" />
+        <property name="to" description="Comma-separated list of email addresses (format 'user@domain' or 'Name &lt;user@domain&gt;')" />
+        <property name="cc" required="false" description="Comma-separated list of email addresses (format 'user@domain' or 'Name &lt;user@domain&gt;')" />
+        <property name="bcc" required="false" description="Comma-separated list of email addresses (format 'user@domain' or 'Name &lt;user@domain&gt;')" />
+        <property name="subject" />
+        <property name="body" size="large" description="Use ${deployed.app.&lt;prop&gt;} to refer to property 'prop' of the deployed application" />
         <!-- unhide so users can choose -->
         <property name="createOrder" kind="integer" hidden="false" default="1" description="Determines when in the step sequence this email will be sent. Lower numbers are earlier in the sequence" />
         <!-- admin properties -->
@@ -27,7 +27,7 @@
 
     <type-modification type="notify.SentTemplateEmail">
         <!-- override -->
-        <property name="Body" hidden="true" default="UNUSED" />
+        <property name="body" hidden="true" default="UNUSED" />
         <property name="template" hidden="true" default="notify/email/${deployed.type}.ftl" />
     </type-modification>
 
@@ -39,18 +39,18 @@
     
     <!-- intended to be modified as part of the installation -->
     <type type="notify.FixedSentTemplateEmail" extends="notify.SentTemplateEmail2">
-        <property name="From" hidden="true" default="OVERRIDE ME" />
-        <property name="To" hidden="true" default="OVERRIDE ME &lt;override@me.com&gt;" />
-        <property name="Cc" hidden="true" required="false" default="" />
-        <property name="Bcc" hidden="true" required="false" default="" />
+        <property name="from" hidden="true" default="OVERRIDE ME" />
+        <property name="to" hidden="true" default="OVERRIDE ME &lt;override@me.com&gt;" />
+        <property name="cc" hidden="true" required="false" default="" />
+        <property name="bcc" hidden="true" required="false" default="" />
     </type>
     
     <type type="notify.DeploymentStartNotification" extends="notify.FixedSentTemplateEmail">
-        <property name="Subject" hidden="true" default="Deployit Deployment start notification"/>
+        <property name="subject" hidden="true" default="Deployit Deployment start notification"/>
     </type>
     
     <type type="notify.DeploymentEndNotification" extends="notify.FixedSentTemplateEmail">
-        <property name="Subject" hidden="true" default="Deployit Deployment end notification"/>
+        <property name="subject" hidden="true" default="Deployit Deployment end notification"/>
     </type>
                 
     <type-modification type="notify.MailServer">

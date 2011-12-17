@@ -34,7 +34,7 @@ public class SentEmailTest extends TestBase {
     public void supportsNoTos() {
         SentEmail newDeployed = newInstance("notify.BasicSentEmail");
         // just to be sure
-        newDeployed.setProperty("To", null);
+        newDeployed.setProperty("to", null);
         assertThat(newDeployed.getToAddresses().size(), is(0));
     }
     
@@ -42,7 +42,7 @@ public class SentEmailTest extends TestBase {
     public void supportsNoCcs() {
         SentEmail newDeployed = newInstance("notify.BasicSentEmail");
         // just to be sure
-        newDeployed.setProperty("Cc", null);
+        newDeployed.setProperty("cc", null);
         assertThat(newDeployed.getCcAddresses().size(), is(0));
     }
     
@@ -50,7 +50,7 @@ public class SentEmailTest extends TestBase {
     public void supportsNoBccs() {
         SentEmail newDeployed = newInstance("notify.BasicSentEmail");
         // just to be sure
-        newDeployed.setProperty("Bcc", null);
+        newDeployed.setProperty("bcc", null);
         assertThat(newDeployed.getBccAddresses().size(), is(0));
     }
 }

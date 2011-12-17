@@ -25,10 +25,10 @@ The appropriate settings for the start/end notifications emails are set by addin
 ```xml
 <synthetic>
   <type-modification type="notify.FixedSentTemplateEmail">
-      <property name="From" hidden="true" default="deployit@acme.com" />
-      <property name="To" hidden="true" default="Stakeholders &lt;stakeholders@acme.com&gt;" />
-      <property name="Cc" hidden="true" required="false" default="" />
-      <property name="Bcc" hidden="true" required="false" default="" />
+      <property name="from" hidden="true" default="deployit@acme.com" />
+      <property name="to" hidden="true" default="Stakeholders &lt;stakeholders@acme.com&gt;" />
+      <property name="cc" hidden="true" required="false" default="" />
+      <property name="bcc" hidden="true" required="false" default="" />
   </type-modification>
 <synthetic>    
 ```
