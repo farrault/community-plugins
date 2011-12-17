@@ -55,10 +55,10 @@
                 
     <type-modification type="notify.MailServer">
         <property name="smtpHost" />
-        <property name="smtpPort" kind="integer" />
-        <property name="smtpUsername" />
-        <property name="smtpPassword" password="true" />
-        <property name="smtpTransport" kind="enum" enum-class="org.codemonkey.simplejavamail.TransportStrategy" default="SMTP_SSL" />
+        <property name="smtpPort" kind="integer" default="25" />
+        <property name="smtpUsername" required="false" />
+        <property name="smtpPassword" required="false" password="true" />
+        <property name="smtpTransport" kind="enum" enum-class="org.codemonkey.simplejavamail.TransportStrategy" default="SMTP_PLAIN" />
     </type-modification>
 
     <type-modification type="udm.Environment">
