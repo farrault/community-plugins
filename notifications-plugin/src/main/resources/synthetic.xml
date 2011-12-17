@@ -37,9 +37,10 @@
         <generate-deployable type="notify.TemplateEmailDraft" extends="generic.Resource" />
     </type>
     
+    <!-- intended to be modified as part of the installation -->
     <type type="notify.FixedSentTemplateEmail" extends="notify.SentTemplateEmail2">
-        <property name="From" hidden="true" default="deployit@acme.com" />
-        <property name="To" hidden="true" default="Andrew Phillips &lt;aphillips@xebialabs.com&gt;" />
+        <property name="From" hidden="true" default="OVERRIDE ME" />
+        <property name="To" hidden="true" default="OVERRIDE ME &lt;override@me.com&gt;" />
         <property name="Cc" hidden="true" required="false" default="" />
         <property name="Bcc" hidden="true" required="false" default="" />
     </type>
