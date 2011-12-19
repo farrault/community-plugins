@@ -12,10 +12,6 @@ dependencies {
   compile "com.xebialabs.deployit.plugins:generic-plugin:${apiVersion}"
 }
 
-repositories {
-	mavenLocal()
-}
-
 afterEvaluate { eachProject ->
   Set testTasks = eachProject.tasks.withType(Test).all
   
