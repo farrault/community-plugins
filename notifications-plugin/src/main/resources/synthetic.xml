@@ -56,7 +56,6 @@
     </type>
                 
     <type-modification type="notify.MailServer">
-        <property name="smtpHost" />
         <property name="smtpPort" kind="integer" default="25" />
         <property name="smtpUsername" required="false" />
         <property name="smtpPassword" required="false" password="true" />
