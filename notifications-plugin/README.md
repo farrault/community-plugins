@@ -20,19 +20,19 @@ Two additional standard options provided by the plugin are sending of "deploymen
 Configuration
 =============
 
-The appropriate settings for the start/end notifications emails are set by adding the following snippet to SERVER_HOME/ext/synthetic.xml and modifying the values as appropriate:
+The appropriate settings for the start/end notifications emails are set by uncommenting the following values in SERVER_HOME/conf/deployit-defaults.properties and modifying the values as appropriate. Properties that are not present should simply be added.
 
-```xml
-<synthetic>
-  <type-modification type="notify.FixedSentTemplateEmail">
-      <property name="from" hidden="true" default="deployit@acme.com" />
-      <property name="to" hidden="true" default="Stakeholders &lt;stakeholders@acme.com&gt;" />
-      <property name="cc" hidden="true" required="false" default="" />
-      <property name="bcc" hidden="true" required="false" default="" />
-  </type-modification>
-<synthetic>    
+```
+# Bcc
+notify.FixedSentTemplateEmail.bcc=Secret stakeholders <secret-stakeholders@acme.com>,secret-stakeholders2@acme.com
+# Cc
+notify.FixedSentTemplateEmail.cc=Not so important stakeholders <lesser-stakeholders@acme.com>
+# From
+notify.FixedSentTemplateEmail.from=deployit@acme.com
+# To
+notify.FixedSentTemplateEmail.to=Stakeholders <stakeholders@acme.com>
 ```
 
-The above properties expect email addresses to be specified as "address" or "name <address>" - note also the XML escaping required for angle brackets. 'To', 'Cc' and 'Bcc' accept comma-separated lists of email addresses.
+The above properties expect email addresses to be specified as "address" or "name <address>". 'To', 'Cc' and 'Bcc' accept comma-separated lists of email addresses.
 
 The contents of the start/end emails can be modified by extracting the templates 'notify/email/notify.DeploymentStartNotification.ftl' and/or 'notify/email/notify.DeploymentEndNotification.ftl' from the plugin JAR into SERVER_HOME/ext and amending them as desired.
