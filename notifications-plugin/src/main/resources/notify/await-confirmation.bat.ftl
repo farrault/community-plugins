@@ -1,6 +1,6 @@
 @echo off
 setlocal
-set CONFIRMATION_STATUS_FILE=%TMP%\awaiting-${deployed.name}
+set CONFIRMATION_STATUS_FILE="%TMP%\awaiting-${deployed.name}"
 
 if not exist %CONFIRMATION_STATUS_FILE% (
   echo Awaiting confirmation of '${deployed.name}'. Please retry this step once confirmation has been received.

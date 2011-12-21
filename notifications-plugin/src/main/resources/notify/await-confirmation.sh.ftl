@@ -1,5 +1,5 @@
 #!/bin/sh
-CONFIRMATION_STATUS_FILE=/tmp/awaiting-${deployed.name}
+CONFIRMATION_STATUS_FILE="/tmp/awaiting-${deployed.name}"
 
 if ! [ -a $CONFIRMATION_STATUS_FILE ]; then
   echo Awaiting confirmation of '${deployed.name}'. Please retry this step once confirmation has been received.
