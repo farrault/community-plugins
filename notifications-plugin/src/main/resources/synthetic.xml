@@ -43,8 +43,9 @@
     <type type="notify.FixedSentTemplateEmail" extends="notify.SentTemplateEmail2">
         <property name="from" hidden="true" default="OVERRIDE ME" />
         <property name="to" hidden="true" default="OVERRIDE ME &lt;override@me.com&gt;" />
-        <property name="cc" hidden="true" required="false" default="" />
-        <property name="bcc" hidden="true" required="false" default="" />
+        <!-- will not be configurable via deployit-defaults.properties if not required -->
+        <property name="cc" hidden="true" default="OVERRIDE ME" />
+        <property name="bcc" hidden="true" default="OVERRIDE ME" />
     </type>
     
     <type type="notify.DeploymentStartNotification" extends="notify.FixedSentTemplateEmail">
@@ -56,10 +57,15 @@
     </type>
                 
     <type-modification type="notify.MailServer">
+        <property name="address" description="The hostname or IP address of the SMTP server" />
         <property name="smtpPort" kind="integer" default="25" />
         <property name="smtpUsername" required="false" />
         <property name="smtpPassword" required="false" password="true" />
         <property name="smtpTransport" kind="enum" enum-class="org.codemonkey.simplejavamail.TransportStrategy" default="SMTP_PLAIN" />
+        <!-- hide unused overthere.Host properties -->
+        <property name="protocol" hidden="true" default="UNUSED" />
+        <property name="os" kind="enum" enum-class="com.xebialabs.overthere.OperatingSystemFamily" hidden="true" default="UNIX" />
+        <property name="temporaryDirectoryPath" hidden="true" default="UNUSED" />
     </type-modification>
 
     <type-modification type="udm.Environment">
