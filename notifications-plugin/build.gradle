@@ -18,6 +18,16 @@ dependencies {
   testCompile 'ch.qos.logback:logback-classic:0.9.24'
 }
 
+repositories {
+	mavenLocal()
+	if (!rootProject.hasProperty('offline')) {
+		mavenCentral()
+		mavenRepo urls: "${nexusBaseUrl}/repositories/snapshots"
+		mavenRepo urls: "${nexusBaseUrl}/repositories/releases"
+		org.apache.ivy.util.url.CredentialsStore.INSTANCE.addCredentials("Sonatype Nexus Repository Manager", nexusHost, nexusUserName, nexusPassword);
+	}
+}
+
 task sourcesJar(type: Jar) {
   classifier = 'sources'
   from sourceSets.main.allSource  
