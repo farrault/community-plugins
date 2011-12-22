@@ -12,31 +12,30 @@ import java.util.List;
 
 import com.google.common.base.Function;
 import com.xebialabs.deployit.plugin.api.udm.ConfigurationItem;
-import com.xebialabs.deployit.plugin.api.udm.Container;
 
 public class LockFileHelper {
 
 	private static final String LOCK_FILE_DIRECTORY = "locks";
 
-	public static void lockContainer(ConfigurationItem ci) throws FileNotFoundException {
+	public static void lock(ConfigurationItem ci) throws FileNotFoundException {
 		createLockDirectoryIfNotExists();
 
 		PrintWriter pw = new PrintWriter(getLockFile(ci));
-		pw.println("Locking container " + ci.getName() + " on " + new Date());
+		pw.println("Locking " + ci.getName() + " on " + new Date());
 		pw.close();
 
 	}
 	
-	public static void unlockContainer(ConfigurationItem ci) {
+	public static void unlock(ConfigurationItem ci) {
 		createLockDirectoryIfNotExists();
 		
 		if (!getLockFile(ci).delete()) {
-			throw new RuntimeException("Failed to unlock container " + ci.getName());
+			throw new RuntimeException("Failed to unlock " + ci.getName());
 		}
 	}
 	
-	public static boolean isLocked(Container container) {
-		return getLockFile(container).exists();
+	public static boolean isLocked(ConfigurationItem ci) {
+		return getLockFile(ci).exists();
 	}
 	
 	public static void clearLocks() {

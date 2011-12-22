@@ -13,10 +13,12 @@ import com.xebialabs.deployit.plugin.api.udm.base.BaseContainer;
 /**
  * Lock manager CI that provides control tasks to list and clear locks.
  */
+@SuppressWarnings("serial")
 @Metadata(root = Metadata.ConfigurationItemRoot.INFRASTRUCTURE, virtual = false, description = "Manager for container locks")
 public class Manager extends BaseContainer {
 
-	@ControlTask(description="Clears all locks")
+	@SuppressWarnings("rawtypes")
+    @ControlTask(description="Clears all locks")
 	public List<Step> clearLocks() {
 		Step clearLocksStep = new Step() {
 
@@ -35,7 +37,8 @@ public class Manager extends BaseContainer {
 		return newArrayList(clearLocksStep);
 	}
 	
-	@ControlTask(description="Lists all locks")
+	@SuppressWarnings("rawtypes")
+    @ControlTask(description="Lists all locks")
 	public List<Step> listLocks() {
 		Step listLocksStep = new Step() {
 

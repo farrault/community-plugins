@@ -37,14 +37,14 @@ public class LockFileHelperTest {
 	public void shouldCorrectlyLockContainer() throws FileNotFoundException {
 		assertThat(LockFileHelper.isLocked(container), is(equalTo(false)));
 		
-		LockFileHelper.lockContainer(container);
+		LockFileHelper.lock(container);
 		
 		assertThat(LockFileHelper.isLocked(container), is(equalTo(true)));
 	}
 	
 	@Test
 	public void shouldCorrectlyClearLocks() throws FileNotFoundException {
-		LockFileHelper.lockContainer(container);
+		LockFileHelper.lock(container);
 		LockFileHelper.clearLocks();
 		
 		assertThat(LockFileHelper.isLocked(container), is(equalTo(false)));

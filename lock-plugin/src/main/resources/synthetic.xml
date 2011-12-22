@@ -4,11 +4,10 @@
 
     <type-modification type="udm.BaseContainer">
         <property name="allowConcurrentDeployments" kind="boolean" required="false" default="false" description="If set, multiple deployments at the same time can be executed, and a 'collision avoidance' check will not be executed" />
-        
-        <!-- admin properties -->
-        <!-- DefaultOrders.PRE_FLIGHT + 2 -->
-        <property name="deploymentInProgressCheckOrder" kind="integer" hidden="true" default="2" />
-        <!-- DefaultOrders.POST_FLIGHT - 2 -->
-        <property name="deploymentInProgressCheckCleanupOrder" kind="integer" hidden="true" default="98" />
+    </type-modification>
+    
+    
+    <type-modification type="udm.Environment">
+        <property name="allowConcurrentDeployments" kind="boolean" required="false" default="false" description="If set, multiple deployments at the same time can be executed, and a 'collision avoidance' check will not be executed" />
     </type-modification>
 </synthetic>
