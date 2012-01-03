@@ -20,17 +20,19 @@ Two additional standard options provided by the plugin are sending of "deploymen
 Configuration
 =============
 
-The appropriate settings for the start/end notifications emails are set by uncommenting the following values in SERVER_HOME/conf/deployit-defaults.properties and modifying the values as appropriate. Properties that are not present should simply be added.
+The appropriate settings for the start/end notifications emails are set by uncommenting the following values in SERVER_HOME/conf/deployit-defaults.properties and modifying the values as appropriate. Properties that are not present should simply be added if desired. 'Cc' and 'Bcc' are not required and may be set to empty.
 
 ```
 # Bcc
-notify.FixedSentTemplateEmail.bcc=Secret stakeholders <secret-stakeholders@acme.com>,secret-stakeholders2@acme.com
+notify.DeploymentStartNotification.bcc=Secret stakeholders <secret-stakeholders@acme.com>,secret-stakeholders2@acme.com
 # Cc
-notify.FixedSentTemplateEmail.cc=Not so important stakeholders <lesser-stakeholders@acme.com>
+notify.DeploymentStartNotification.cc=Not so important stakeholders <lesser-stakeholders@acme.com>
 # From
-notify.FixedSentTemplateEmail.from=deployit@acme.com
+notify.DeploymentStartNotification.from=deployit@acme.com
 # To
-notify.FixedSentTemplateEmail.to=Stakeholders <stakeholders@acme.com>
+notify.DeploymentStartNotification.to=Stakeholders <stakeholders@acme.com>
+
+...and similarly for DeploymentEndNotification etc.
 ```
 
 The above properties expect email addresses to be specified as "address" or "name <address>". 'To', 'Cc' and 'Bcc' accept comma-separated lists of email addresses.

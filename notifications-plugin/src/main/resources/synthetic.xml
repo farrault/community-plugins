@@ -43,9 +43,9 @@
     <type type="notify.FixedSentTemplateEmail" extends="notify.SentTemplateEmail2">
         <property name="from" hidden="true" default="OVERRIDE ME" />
         <property name="to" hidden="true" default="OVERRIDE ME &lt;override@me.com&gt;" />
-        <!-- will not be configurable via deployit-defaults.properties if not required -->
-        <property name="cc" hidden="true" default="OVERRIDE ME" />
-        <property name="bcc" hidden="true" default="OVERRIDE ME" />
+        <!-- will not be included in deployit-defaults.properties as the value is empty, but can be added by users -->
+        <property name="cc" hidden="true" required="false" default="" />
+        <property name="bcc" hidden="true" required="false" default="" />
     </type>
     
     <type type="notify.DeploymentStartNotification" extends="notify.FixedSentTemplateEmail">
