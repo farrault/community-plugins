@@ -5,7 +5,7 @@
 	<type type="www.ApacheWeblogicSetting" extends="www.ApacheVirtualHost" deployable-type="www.ApacheWeblogicSettingSpec"
 	      description="Weblogic Apache configuration settings">
 		<generate-deployable type="www.ApacheWeblogicSettingSpec" extends="www.ApacheVirtualHostSpec"/>
-		<property name="targets" kind="set_of_ci" referenced-type="wls.Server" required="true" description="list of the targeted Weblogic Servers"/>
+		<property name="targets" kind="set_of_ci" referenced-type="wls.WlsContainer" required="true" description="list of the targeted Weblogic Servers"/>
 		<property name="matchExpressions" kind="set_of_string" required="false" description="proxy requests by MIME type"/>
 	</type>
 

@@ -28,18 +28,18 @@ public class TopologyFactory {
 		wls10gUnixHost = newInstance("overthere.SshHost");
 		wls10gUnixHost.setId("Infrastructure/wls-103");
 		wls10gUnixHost.setOs(UNIX);
-		wls10gUnixHost.putSyntheticProperty(CONNECTION_TYPE, SFTP);
-		wls10gUnixHost.putSyntheticProperty(ADDRESS, "wls-103");
-		wls10gUnixHost.putSyntheticProperty(USERNAME, "root");
-		wls10gUnixHost.putSyntheticProperty(PASSWORD, "centos");
+		wls10gUnixHost.setProperty(CONNECTION_TYPE, SFTP);
+		wls10gUnixHost.setProperty(ADDRESS, "wls-101");
+		wls10gUnixHost.setProperty(USERNAME, "root");
+		wls10gUnixHost.setProperty(PASSWORD, "centos");
 
 		wls10gUnixHost2 = newInstance("overthere.SshHost");
 		wls10gUnixHost2.setId("Infrastructure/wls-103");
 		wls10gUnixHost2.setOs(UNIX);
-		wls10gUnixHost2.putSyntheticProperty(CONNECTION_TYPE, SFTP);
-		wls10gUnixHost2.putSyntheticProperty(ADDRESS, "wls-103");
-		wls10gUnixHost2.putSyntheticProperty(USERNAME, "root");
-		wls10gUnixHost2.putSyntheticProperty(PASSWORD, "centos");
+		wls10gUnixHost2.setProperty(CONNECTION_TYPE, SFTP);
+		wls10gUnixHost2.setProperty(ADDRESS, "wls-102");
+		wls10gUnixHost2.setProperty(USERNAME, "root");
+		wls10gUnixHost2.setProperty(PASSWORD, "centos");
 
 
 		wls10gUnixDomain = newInstance(Domain.class);

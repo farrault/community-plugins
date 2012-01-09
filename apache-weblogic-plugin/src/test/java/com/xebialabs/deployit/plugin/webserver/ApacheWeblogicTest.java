@@ -2,9 +2,7 @@ package com.xebialabs.deployit.plugin.webserver;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.xebialabs.deployit.deployment.planner.DeltaSpecificationBuilder;
 import com.xebialabs.deployit.plugin.api.boot.PluginBooter;
@@ -15,6 +13,7 @@ import com.xebialabs.deployit.plugin.api.execution.Step;
 import com.xebialabs.deployit.plugin.api.reflect.Type;
 import com.xebialabs.deployit.plugin.api.udm.*;
 import com.xebialabs.deployit.plugin.wls.container.Server;
+import com.xebialabs.deployit.plugin.wls.container.WlsContainer;
 import com.xebialabs.deployit.test.deployment.DeployitTester;
 import com.xebialabs.deployit.test.support.LoggingDeploymentExecutionContext;
 import com.xebialabs.deployit.test.support.TestUtils;
@@ -30,12 +29,13 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import static com.google.common.base.Joiner.on;
 import static com.google.common.collect.Collections2.filter;
+import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.io.Files.readLines;
-import static com.xebialabs.deployit.plugin.webserver.TopologyFactory.wls10gUnixServer1;
-import static com.xebialabs.deployit.plugin.webserver.TopologyFactory.wls10gUnixServer2;
+import static com.xebialabs.deployit.plugin.webserver.TopologyFactory.*;
 import static com.xebialabs.deployit.test.support.TestUtils.newInstance;
 import static java.util.Collections.singleton;
 import static org.hamcrest.CoreMatchers.is;
@@ -44,29 +44,35 @@ import static org.junit.Assert.assertThat;
 @RunWith(Parameterized.class)
 public class ApacheWeblogicTest {
 
-	private final Set<Server> servers;
+	private final Set<WlsContainer> servers;
 	private final Container apacheWebServer;
 	private final Environment environment;
 	private final String generatedServers;
 
 
-	public ApacheWeblogicTest(Container apacheWebServer, Set<Server> servers) {
+	public ApacheWeblogicTest(Container apacheWebServer, Set<WlsContainer> servers) {
 		this.apacheWebServer = apacheWebServer;
 		this.servers = servers;
 		this.environment = TestUtils.createEnvironment(apacheWebServer);
-		generatedServers = Joiner.on(',').join(Collections2.transform(servers, new Function<Server, String>() {
-			public String apply(Server input) {
-				return input.getHost().getProperty("address") + ":" + input.getPort();
-
-			}
+		this.generatedServers = on(',').join(transform(servers, new Function<WlsContainer, String>() {
+			public String apply(WlsContainer input) {
+				return on(',').join(transform(input.getServers(), new Function<Server, String>() {
+					public String apply(Server input) {
+						return input.getHost().getProperty("address") + ":" + input.getPort();
+					}
+				}));
+			};
 		}));
 	}
 
 	@Parameterized.Parameters
 	public static List<Object[]> getTargetDomains() {
 		List<Object[]> targets = newArrayList();
+		targets.add(new Object[]{TopologyFactory.apacheServer, singleton(wls10gUnixCluster1)});
+		targets.add(new Object[]{TopologyFactory.apacheServer, newHashSet(wls10gUnixCluster2, wls10gUnixCluster1)});
 		targets.add(new Object[]{TopologyFactory.apacheServer, singleton(wls10gUnixServer1)});
 		targets.add(new Object[]{TopologyFactory.apacheServer, newHashSet(wls10gUnixServer1, wls10gUnixServer2)});
+		targets.add(new Object[]{TopologyFactory.apacheServer, newHashSet(wls10gUnixServer1, wls10gUnixServer2, wls10gUnixCluster1, wls10gUnixCluster2)});
 		return targets;
 	}
 
@@ -98,7 +104,7 @@ public class ApacheWeblogicTest {
 	public void testTest() throws Exception {
 		Deployable apacheWlsSettingSpec = newInstance("www.ApacheWeblogicSettingSpec");
 		apacheWlsSettingSpec.setId("App/1.0/wlsApache");
-		final Set<String> matchExpressions = Sets.newHashSet("*.jsp");
+		final Set<String> matchExpressions = Sets.newHashSet("*.jsp"," *.do");
 		apacheWlsSettingSpec.setProperty("matchExpressions", matchExpressions);
 
 		final File docroot = folder.newFolder("docroot");
@@ -107,7 +113,7 @@ public class ApacheWeblogicTest {
 
 		final Deployed deployed = tester.generateDeployed(apacheWlsSettingSpec, apacheWebServer, Type.valueOf("www.ApacheWeblogicSetting"));
 		deployed.setProperty("port", "80");
-		deployed.setProperty("host", "*");
+		deployed.setProperty("host", "myremote.com");
 		deployed.setProperty("targets", this.servers);
 		deployed.setProperty("documentRoot", docroot.getAbsolutePath());
 
