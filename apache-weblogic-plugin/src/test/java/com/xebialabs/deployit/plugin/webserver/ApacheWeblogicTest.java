@@ -1,5 +1,10 @@
 package com.xebialabs.deployit.plugin.webserver;
 
+import com.google.common.base.Charsets;
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.xebialabs.deployit.deployment.planner.DeltaSpecificationBuilder;
 import com.xebialabs.deployit.plugin.api.boot.PluginBooter;
@@ -25,8 +30,10 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import static com.google.common.collect.Collections2.filter;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.io.Files.readLines;
 import static com.xebialabs.deployit.plugin.webserver.TopologyFactory.wls10gUnixServer1;
 import static com.xebialabs.deployit.plugin.webserver.TopologyFactory.wls10gUnixServer2;
 import static com.xebialabs.deployit.test.support.TestUtils.newInstance;
@@ -40,12 +47,19 @@ public class ApacheWeblogicTest {
 	private final Set<Server> servers;
 	private final Container apacheWebServer;
 	private final Environment environment;
+	private final String generatedServers;
 
 
 	public ApacheWeblogicTest(Container apacheWebServer, Set<Server> servers) {
 		this.apacheWebServer = apacheWebServer;
 		this.servers = servers;
 		this.environment = TestUtils.createEnvironment(apacheWebServer);
+		generatedServers = Joiner.on(',').join(Collections2.transform(servers, new Function<Server, String>() {
+			public String apply(Server input) {
+				return input.getHost().getProperty("address") + ":" + input.getPort();
+
+			}
+		}));
 	}
 
 	@Parameterized.Parameters
@@ -84,18 +98,18 @@ public class ApacheWeblogicTest {
 	public void testTest() throws Exception {
 		Deployable apacheWlsSettingSpec = newInstance("www.ApacheWeblogicSettingSpec");
 		apacheWlsSettingSpec.setId("App/1.0/wlsApache");
-		Set<String> mes = Sets.newHashSet("*.jsp");
-		apacheWlsSettingSpec.setProperty("matchExpressions", mes);
+		final Set<String> matchExpressions = Sets.newHashSet("*.jsp");
+		apacheWlsSettingSpec.setProperty("matchExpressions", matchExpressions);
 
 		final File docroot = folder.newFolder("docroot");
 		final File configurationFragmentDirectory = folder.newFolder("conf");
-		apacheWebServer.setProperty("configurationFragmentDirectory",configurationFragmentDirectory.getAbsolutePath());
+		apacheWebServer.setProperty("configurationFragmentDirectory", configurationFragmentDirectory.getAbsolutePath());
 
 		final Deployed deployed = tester.generateDeployed(apacheWlsSettingSpec, apacheWebServer, Type.valueOf("www.ApacheWeblogicSetting"));
-		deployed.setProperty("port","80");
-		deployed.setProperty("host","*");
-		deployed.setProperty("targets",this.servers);
-		deployed.setProperty("documentRoot",docroot.getAbsolutePath());
+		deployed.setProperty("port", "80");
+		deployed.setProperty("host", "*");
+		deployed.setProperty("targets", this.servers);
+		deployed.setProperty("documentRoot", docroot.getAbsolutePath());
 
 		final DeploymentPackage deploymentPackageOne = TestUtils.createDeploymentPackage("1.0", apacheWlsSettingSpec);
 		final DeployedApplication deployedApplication = TestUtils.createDeployedApplication(deploymentPackageOne, environment);
@@ -105,9 +119,21 @@ public class ApacheWeblogicTest {
 				.build();
 		Plan resolvedPlan = tester.resolvePlan(spec);
 		List<DeploymentStep> resolvedSteps = resolvedPlan.getSteps();
-		assertThat(resolvedSteps.size(),is(5));
+		assertThat(resolvedSteps.size(), is(3));
 		Step.Result result = tester.executePlan(resolvedPlan, context);
 		assertThat(result, is(Step.Result.Success));
+
+		final List<String> generatedFile = readLines(new File(configurationFragmentDirectory, deployed.getName() + ".conf"), Charsets.UTF_8);
+		assertThat(filter(generatedFile, new Predicate<String>() {
+			public boolean apply(String input) {
+				return input.contains(generatedServers);
+			}
+		}).size(), is(1));
+		assertThat(filter(generatedFile, new Predicate<String>() {
+			public boolean apply(String input) {
+				return input.contains("MatchExpression");
+			}
+		}).size(), is(matchExpressions.size()));
 
 
 	}
