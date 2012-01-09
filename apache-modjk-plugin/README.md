@@ -48,6 +48,8 @@ It contain declarations for an Ear, a specification for a modjk worker and main 
 By default, the plugin targets all the generic Containers. To manage only a specific container, modify the 'reference-type' of the 'targets' property.
 
 Example: to target only the JBoss servers
+
+
 ```xml
 <type type="www.ApacheModJKWorkerSetting" extends="www.ApacheConfFragment" deployable-type="www.ApacheModJKWorkerSpec">
 	....
