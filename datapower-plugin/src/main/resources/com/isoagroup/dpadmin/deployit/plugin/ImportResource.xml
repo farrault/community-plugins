@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dpscript
+	xmlns="http://www.isoagroup.com/datapower/automation/framework/1.0.0.1"
+	name="$releaseName">
+	<dpflow name="$flowName" environment-id="$environmentId">
+		<!-- Create directory and copy file -->
+		<dpcommand>
+			<param name="action" value="create-directory" />
+			<param name="domain" value="$domainName" />
+			<param name="directory" value="$targetDirectory" />
+		</dpcommand>
+		<dpcommand>
+			<param name="action" value="copy-file" />
+			<param name="domain" value="$domainName" />
+			<param name="source-filename" value="$resource" />
+			<param name="target-filename" value="$targetFilename" />
+		</dpcommand>
+
+		<!--Save config to save the resources -->
+		<dpcommand>
+			<param name="action" value="save-config" />
+			<param name="domain" value="$domainName" />
+		</dpcommand>
+
+		<!--Clear Cache -->
+		<dpcommand>
+			<param name="action" value="flush-stylesheet-cache" />
+			<param name="domain" value="$domainName" />
+			<param name="xml-manager" value="$xmlManagerName" />
+		</dpcommand>
+		<dpcommand>
+			<param name="action" value="flush-document-cache" />
+			<param name="domain" value="$domainName" />
+			<param name="xml-manager" value="$xmlManagerName" />
+		</dpcommand>
+	</dpflow>
+</dpscript>
+		

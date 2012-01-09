@@ -1,0 +1,11 @@
+apply from: 'https://github.com/xebialabs/deployit-common-build/raw/master/repositories.gradle'
+apply from: 'https://github.com/xebialabs/deployit-common-build/raw/master/plugin-build.gradle'
+
+version = '0.1-SNAPSHOT'
+
+dependencies {
+	compile 'com.xebialabs.deployit:plugin-api:3.0.1'
+	compile deps.slf4j_api, deps.spring_core
+	testCompile 'com.xebialabs.deployit:core:3.0.1'
+}
+

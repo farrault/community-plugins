@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dpscript
+	xmlns="http://www.isoagroup.com/datapower/automation/framework/1.0.0.1"
+	name="$releaseName">
+	<dpflow name="$flowName" environment-id="$environmentId">
+		<!--Save existing configuration as a checkpoint so that roll back can happen 
+			if needed -->
+		<dpcommand on-error="continue">
+			<param name="action" value="save-checkpoint" />
+			<param name="domain" value="$domainName" />
+			<param name="chk-point-name" value="$snapshotName" />
+		</dpcommand>
+		<!--Save config to save the checkpoint -->
+		<dpcommand>
+			<param name="action" value="save-config" />
+			<param name="domain" value="$domainName" />
+		</dpcommand>
+
+		<!--Cleanup domain -->
+		<dpcommand>
+			<param name="action" value="reset-domain" />
+			<param name="domain" value="$domainName" />
+		</dpcommand>
+		<dpcommand>
+			<param name="action" value="save-config" />
+			<param name="domain" value="$domainName" />
+		</dpcommand>
+
+		<!--Start Deployment - Import Config -->
+		<dpcommand>
+			<param name="action" value="import-config" />
+			<param name="domain" value="$domainName" />
+			<param name="input-file" value="$export" />
+		</dpcommand>
+
+		<!--Save config to save the import -->
+		<dpcommand>
+			<param name="action" value="save-config" />
+			<param name="domain" value="$domainName" />
+		</dpcommand>
+
+		<!--Clear Cache -->
+		<dpcommand>
+			<param name="action" value="flush-stylesheet-cache" />
+			<param name="domain" value="$domainName" />
+			<param name="xml-manager" value="$xmlManagerName" />
+		</dpcommand>
+		<dpcommand>
+			<param name="action" value="flush-document-cache" />
+			<param name="domain" value="$domainName" />
+			<param name="xml-manager" value="$xmlManagerName" />
+		</dpcommand>
+	</dpflow>
+</dpscript>

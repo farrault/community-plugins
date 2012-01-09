@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+
+Name: com/isoagroup/dpadmin/deployit/plugin/DataPowerAppliance.class
+ConfigurationItem: true
+
+Name: com/isoagroup/dpadmin/deployit/plugin/DataPowerConfig.class
+ConfigurationItem: true
+
+Name: com/isoagroup/dpadmin/deployit/plugin/DataPowerConfigToApplianceMapping.class
+ConfigurationItem: true
+
+Name: com/isoagroup/dpadmin/deployit/plugin/DataPowerResource.class
+ConfigurationItem: true
+
+Name: com/isoagroup/dpadmin/deployit/plugin/DataPowerResourceToApplianceMapping.class
+ConfigurationItem: true
+
+Name: com/isoagroup/dpadmin/deployit/plugin/DataPowerRunBook.class
+RunBook: true
+
+

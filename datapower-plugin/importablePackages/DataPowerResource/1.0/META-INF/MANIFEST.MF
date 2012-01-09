@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Deployit-Package-Format-Version: 1.2
+CI-Application: DataPowerResource
+CI-Version: 1.0
+
+Name: amiToMdm_request.xsl
+CI-Type: DataPowerResource
+CI-Name: amiToMdm_request.xsl
+CI-domainName: TargetDomainNode2
+CI-xmlManagerName: default

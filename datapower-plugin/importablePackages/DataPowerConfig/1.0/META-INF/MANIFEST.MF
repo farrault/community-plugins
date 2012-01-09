@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Deployit-Package-Format-Version: 1.2
+CI-Application: DataPowerConfig
+CI-Version: 1.0
+
+Name: demosource.zip
+CI-Type: DataPowerConfig
+CI-Name: DemoSource
+CI-domainName: TargetDomainNode2
+CI-xmlManagerName: default

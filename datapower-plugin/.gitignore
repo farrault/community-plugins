@@ -1,0 +1,11 @@
+.classpath
+.project
+.settings
+.gradle
+bin
+build
+conf
+work
+repository
+recovery.dat
+derby.log
