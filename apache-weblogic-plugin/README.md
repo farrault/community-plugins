@@ -10,7 +10,7 @@ The Apache Weblogic plugin is a Deployit plugin that is used to manage the confi
 
 ##Features##
 
-* Generate the apache configuration file
+* Generate the apacheWebServer configuration file
 
 # Requirements #
 
@@ -43,7 +43,7 @@ It contain declarations for an Ear, a specification for a Weblogic configuration
 # Oracle documentation #
 
 * [General Parameters for Web Server Plug-In](http://docs.oracle.com/cd/E11035_01/wls100/plugins/plugin_params.html#wp1143055)
-* [Installing and Configuring the Apache HTTP Server Plug-In](http://docs.oracle.com/cd/E15051_01/wls/docs103/plugins/apache.html)
+* [Installing and Configuring the Apache HTTP Server Plug-In](http://docs.oracle.com/cd/E15051_01/wls/docs103/plugins/apacheWebServer.html)
 
 
 
