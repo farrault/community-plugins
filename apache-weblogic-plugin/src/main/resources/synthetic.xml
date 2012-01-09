@@ -1,0 +1,12 @@
+<synthetic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns="http://www.xebialabs.com/deployit/synthetic"
+           xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd">
+
+	<type type="www.ApacheWeblogicSetting" extends="www.ApacheVirtualHost" deployable-type="www.ApacheWeblogicSettingSpec"
+	      descriptions="Weblogic Apache configuration settings">
+		<generate-deployable type="www.ApacheWeblogicSettingSpec" extends="generic.Resource"/>
+		<property name="targets" kind="set_of_ci" referenced-type="wls.Server" required="true" description="list of the targeted Weblogic Servers"/>
+		<property name="matchExpressions" kind="set_of_string" required="false" description="proxy requests by MIME type"/>
+	</type>
+
+</synthetic>
