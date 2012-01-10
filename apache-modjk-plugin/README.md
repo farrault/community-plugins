@@ -25,7 +25,7 @@ The plugin works with the standard deployment package of DAR format. Please see 
 compose one. 
 
 The following is a sample MANIFEST.MF file that can be used to create a WebLogic specific deployment package. 
-It contain declarations for an Ear, a specification for a modjk worker and main configuration.
+It contain declarations for an Ear, a specification for a modjk worker, main configuration and the associated virtual host.
 
     Manifest-Version: 1.0
     Deployit-Package-Format-Version: 1.3
@@ -41,7 +41,11 @@ It contain declarations for an Ear, a specification for a modjk worker and main 
 
 	Name: PetClinic-jk
 	CI-Type: www.ApacheModJKSpec
-	CI-mountedContexts-EntryValue-1: /petclinc/*
+
+	Name: PetClinic-vh-jk
+	CI-Type: www.ApacheVirtualHostModJKSpec
+	CI-mountedContexts-EntryValue-1: /petclinic/*
+	CI-mountedContexts-EntryValue-2: /admin
 
 
 # Note #
