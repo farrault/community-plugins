@@ -1,0 +1,60 @@
+<synthetic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns="http://www.xebialabs.com/deployit/synthetic"
+           xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd">
+
+
+	<type-modification type="www.ApacheHttpdServer">
+		<property name="logDirectory"/>
+	</type-modification>
+
+	<type type="www.ApacheVirtualHostModJKSetting" extends="www.ApacheVirtualHost" deployable-type="www.ApacheVirtualHostModJKSpec" description="Deployed modjk worker settings inside a virtual host definition">
+		<generate-deployable type="www.ApacheVirtualHostModJKSpec" extends="generic.Resource"/>
+		<property name="mountedContexts" kind="set_of_string" required="false" description="list of the mounted contexts"/>
+		<property name="unmountedContexts" kind="set_of_string" required="false" description="list of the unmounted contexts"/>
+		<property name="loadbalancerName" kind="string" default="LB" hidden="true" description="name of the load balancer"/>
+	</type>
+
+
+	<type type="www.ApacheModJKWorkerSetting" extends="www.ApacheConfFragment" deployable-type="www.ApacheModJKWorkerSpec"
+	      description="Deployed modjk worker settings">
+		<generate-deployable type="www.ApacheModJKWorkerSpec" extends="generic.Resource"/>
+
+		<property name="targets" kind="set_of_ci" referenced-type="generic.Container" required="true"/>
+		<property name="jkstatus" kind="boolean" default="true"/>
+
+		<property name="loadbalancerName" kind="string" default="LB" category="Load Balancer" hidden="true"/>
+		<property name="stickySession" kind="boolean" default="true" category="Load Balancer"/>
+		<property name="stickySessionForce" kind="boolean" default="true" category="Load Balancer"/>
+
+		<property name="retries" kind="integer" default="3" category="Worker"/>
+		<property name="socketKeepAlive" kind="integer" default="1" category="Worker"/>
+		<property name="socketTimeout" kind="integer" default="30" category="Worker"/>
+
+		<property name="targetFile" default="workers.properties" description="Target file name" hidden="true"/>
+		<property name="template" hidden="true" default="www/apache/${deployed.type}.properties.ftl" description="Configuration fragment template file name."/>
+	</type>
+
+
+	<type type="www.ApacheModJKSetting" extends="www.ApacheConfFragment" deployable-type="www.ApacheModJKSpec" description="Deployed modjk worker settings">
+
+		<generate-deployable type="www.ApacheModJKSpec" extends="generic.Resource"/>
+
+		<property name="mountedContexts" kind="set_of_string" required="false"/>
+		<property name="unmountedContexts" kind="set_of_string" required="false"/>
+		<property name="loadbalancerName" kind="string" default="LB" hidden="true"/>
+
+		<property name="moduleName" required="true" default="jk_module" category="Configuration"/>
+		<property name="modulePath" required="false" category="Configuration"/>
+
+		<property name="workersFile" required="false" category="Configuration" default="workers.properties"/>
+		<property name="logFile" required="false" description="log filename of the modjk" default="jk.log" category="Configuration"/>
+		<property name="logLevel" required="false" default="info" category="Configuration"/>
+		<property name="logStampFormat" required="false" default="[%a %b %d %H:%M:%S %Y]" category="Configuration"/>
+		<property name="options" required="false" default="+ForwardKeySize +ForwardURICompat -ForwardDirectories" category="Configuration"/>
+		<property name="requestLogFormat" required="false" default=" %T %H %m %b %B %s %v %V %w %r %R %p %U %q" category="Configuration"/>
+
+		<property name="targetFile" default="mod_jk.conf" description="Target file name" hidden="true"/>
+	</type>
+
+
+</synthetic>
