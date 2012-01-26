@@ -8,8 +8,8 @@
 	      description="Deployed RPM package on a remote host.">
 		<generate-deployable type="rpm.Package" extends="generic.File"/>
 		<property name="createScript" kind="string" default="rpm/create-rpm" hidden="true"/>
-		<property name="modifyScript" kind="string" default="rpm/modify-rpm" required="false"/>
-		<property name="destroyScript" kind="string" default="rpm/destroy-rpm" required="false"/>
+		<property name="modifyScript" kind="string" default="rpm/modify-rpm" hidden="true" required="false"/>
+		<property name="destroyScript" kind="string" default="rpm/destroy-rpm" hidden="true" required="false"/>
 	</type>
 
 </synthetic>
