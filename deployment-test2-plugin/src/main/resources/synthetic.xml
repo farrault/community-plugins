@@ -24,5 +24,9 @@
         <property name="createVerb" hidden="true" default="Run" />
         <!-- DefaultOrders.POST_FLIGHT + 2-->
         <property name="createOrder" kind="integer" hidden="true" default="102" />
+        <property name="noopScript" hidden="true" default="tests2/execute-http-request" />
+        <property name="noopVerb" hidden="true" default="Run" />
+        <!-- DefaultOrders.POST_FLIGHT + 2-->
+        <property name="noopOrder" kind="integer" hidden="true" default="102" />
     </type>
 </synthetic>
