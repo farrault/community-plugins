@@ -42,10 +42,14 @@ If you want to apply commands before and after the RPM installation, package a r
 
 Exemple:
 
+```
+
 <type type="acme.MyRpmContainer extends="rpm.Container">
 	<property name="stopScript" default="acme/before"/>
 	<property name="startScript" default="acme/after"/>
 </type>
+
+```
 
 and define yours command in acme/before.sh.ftl and acme.after.sh.ftl files
 
