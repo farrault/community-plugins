@@ -38,10 +38,22 @@ public class RPMItest {
 
 	private final HostContainer target;
 	private final Environment environment;
+	private final String deployedType;
+	private final String deployableType;
 
-	public RPMItest(HostContainer target) {
+	public RPMItest(HostContainer target, String deployedType, String deployableType) {
 		this.target = target;
+		this.deployedType = deployedType;
+		this.deployableType = deployableType;
 		this.environment = TestUtils.createEnvironment(target);
+	}
+
+	@Parameterized.Parameters
+	public static List<Object[]> getTargetDomains() {
+		List<Object[]> targets = newArrayList();
+		targets.add(new Object[]{TopologyFactory.sshHost, "rpm.DeployedRPM", "rpm.Package"});
+		targets.add(new Object[]{TopologyFactory.rpmContainer, "rpm.DeployedRPMOnContainer", "rpm.ContainerPackage"});
+		return targets;
 	}
 
 	@Test
@@ -50,10 +62,10 @@ public class RPMItest {
 		final File workingFolder = folder.newFolder("itestrpm");
 
 		//Initial
-		final Deployable rpm1 = (Deployable) TestUtils.createArtifact("toto", "1.0", "rpm/toto-0.1-1.i386.rpm", "rpm.Package", workingFolder);
+		final Deployable rpm1 = (Deployable) TestUtils.createArtifact("toto", "1.0", "rpm/toto-0.1-1.i386.rpm", deployableType, workingFolder);
 		final DeploymentPackage deploymentPackageOne = TestUtils.createDeploymentPackage("1.0", rpm1);
 		final DeployedApplication deployedApplication = TestUtils.createDeployedApplication(deploymentPackageOne, environment);
-		final Deployed rpm1Deployed = tester.generateDeployed(rpm1, target, Type.valueOf("rpm.DeployedPackage"));
+		final Deployed rpm1Deployed = tester.generateDeployed(rpm1, target, Type.valueOf(deployedType));
 		DeltaSpecification spec = new DeltaSpecificationBuilder()
 				.initial(deployedApplication.getVersion(), deployedApplication.getEnvironment())
 				.create(rpm1Deployed)
@@ -62,9 +74,9 @@ public class RPMItest {
 
 
 		//Upgrade
-		final Deployable rpm2 = (Deployable) TestUtils.createArtifact("toto", "1.0", "rpm/toto-0.2-1.i386.rpm", "rpm.Package", workingFolder);
+		final Deployable rpm2 = (Deployable) TestUtils.createArtifact("toto", "1.0", "rpm/toto-0.2-1.i386.rpm", deployableType, workingFolder);
 		final DeploymentPackage deploymentPackageTwo = TestUtils.createDeploymentPackage("1.0", rpm2);
-		final Deployed rpm2Deployed = tester.generateDeployed(rpm2, target, Type.valueOf("rpm.DeployedPackage"));
+		final Deployed rpm2Deployed = tester.generateDeployed(rpm2, target, Type.valueOf(deployedType));
 		spec = new DeltaSpecificationBuilder()
 				.upgrade(deploymentPackageTwo, deployedApplication)
 				.modify(rpm1Deployed, rpm2Deployed)
@@ -100,12 +112,6 @@ public class RPMItest {
 
 	}
 
-	@Parameterized.Parameters
-	public static List<Object[]> getTargetDomains() {
-		List<Object[]> targets = newArrayList();
-		targets.add(new Object[]{TopologyFactory.sshHost});
-		return targets;
-	}
 
 	@Rule
 	public TemporaryFolder folder = new TemporaryFolder();

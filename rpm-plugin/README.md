@@ -6,7 +6,7 @@ See the **Deployit Reference Manual** for background information on Deployit and
 
 # Overview #
 
-The RPM plugin is a Deployit plugin allows to package RPM files and deploy them.
+The RPM plugin is a Deployit plugin allows to package RPM files and deploy them, either on a Host, either on a rpm.Container.
 
 ##Features##
 
@@ -37,4 +37,16 @@ It contain declarations for an RPM package.
     CI-Type: rpm.Package
 
 Note: leave the CI-Name without the '.rpm' extension to allow to perform query before the initial installation or the update.
+
+If you want to apply commands before and after the RPM installation, package a rpm.ContainerPackage and target a rpm.Container
+
+Exemple:
+
+<type type="acme.MyRpmContainer extends="rpm.Container">
+	<property name="stopScript" default="acme/before"/>
+	<property name="startScript" default="acme/after"/>
+</type>
+
+and define yours command in acme/before.sh.ftl and acme.after.sh.ftl files
+
 

@@ -2,14 +2,33 @@
            xmlns="http://www.xebialabs.com/deployit/synthetic"
            xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd">
 
-	<type type="rpm.DeployedPackage" extends="generic.ExecutedScriptWithDerivedArtifact"
+
+	<type type="rpm.AbstractDeployedRPM" extends="generic.ExecutedScriptWithDerivedArtifact" virtual="true">
+		<property name="createScript" kind="string" default="rpm/create-rpm" hidden="true"/>
+		<property name="modifyScript" kind="string" default="rpm/modify-rpm" hidden="true" required="false"/>
+		<property name="destroyScript" kind="string" default="rpm/destroy-rpm" hidden="true" required="false"/>
+
+		<property name="createVerb" kind="string" default="Install rpm" hidden="true"/>
+		<property name="modifyVerb" kind="string" default="Upgrade rpm" hidden="true"/>
+		<property name="modifyVerb" kind="string" default="Remove rpm" hidden="true"/>
+	</type>
+
+
+	<type type="rpm.DeployedRPM" extends="rpm.AbstractDeployedRPM"
 	      deployable-type="rpm.Package"
 	      container-type="overthere.SshHost"
-	      description="Deployed RPM package on a remote host.">
+	      description="Deployed RPM package on a ssh host.">
 		<generate-deployable type="rpm.Package" extends="generic.File"/>
-		<property name="createScript" kind="string" default="rpm/create-rpm" hidden="true"/>
-		<property name="modifyScript" kind="string" default="rpm/modify-rpm" required="false"/>
-		<property name="destroyScript" kind="string" default="rpm/destroy-rpm" required="false"/>
 	</type>
+
+	<type type="rpm.Container" extends="generic.Container"/>
+
+	<type type="rpm.DeployedRPMOnContainer" extends="rpm.AbstractDeployedRPM"
+	      deployable-type="rpm.ContainerPackage"
+	      container-type="rpm.Container"
+	      description="Deployed RPM package on a remote hosted container.">
+		<generate-deployable type="rpm.ContainerPackage" extends="generic.File"/>
+	</type>
+
 
 </synthetic>
