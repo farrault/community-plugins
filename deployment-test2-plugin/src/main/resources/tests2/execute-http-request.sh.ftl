@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 <#assign envVars=deployed.container.envVars />
 <#list envVars?keys as envVar>
