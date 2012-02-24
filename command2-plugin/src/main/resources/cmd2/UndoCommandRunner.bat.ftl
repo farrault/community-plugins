@@ -11,13 +11,7 @@ REM do not remove - this actually triggers the upload
 cd "${deployed.file}"
 </#if>
 
-<#if deployed.undoCommand??>
 ${deployed.undoCommand}
-<#else>
-echo No undo command specified. Nothing to do.
-endlocal
-exit
-</#if>
 
 set COMMAND_EXIT_CODE=%ERRORLEVEL%
 

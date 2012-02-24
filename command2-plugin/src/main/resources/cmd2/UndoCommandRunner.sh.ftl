@@ -10,12 +10,7 @@ export ${envVar}="${envVars[envVar]}"
 cd "${deployed.file}"
 </#if>
 
-<#if deployed.undoCommand??>
 ${deployed.undoCommand}
-<#else>
-echo No undo command specified. Nothing to do.
-exit
-</#if>
 
 COMMAND_EXIT_CODE=$?
 

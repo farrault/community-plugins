@@ -13,7 +13,7 @@
       <!-- admin properties -->
       <property name="createScript" hidden="true" default="cmd2/CommandRunner" />
       <property name="createVerb" hidden="true" default="Run" />
-      <property name="destroyScript" hidden="true" default="cmd2/UndoCommandRunner" />
+      <property name="destroyScript" hidden="true" default="&lt;#if deployed.undoCommand??&gt;cmd2/UndoCommandRunner&lt;/#if&gt;" />
       <property name="destroyVerb" hidden="true" default="Undo" />
     </type>
 
@@ -27,8 +27,8 @@
       <!-- admin properties -->
       <property name="createScript" hidden="true" default="cmd2/CommandRunner" />
       <property name="createVerb" hidden="true" default="Run" />
-      <property name="destroyScript" hidden="true" default="cmd2/UndoCommandRunner" />
-      <property name="destroyVerb" hidden="true" default="Run" />
+      <property name="destroyScript" hidden="true" default="&lt;#if deployed.undoCommand??&gt;cmd2/UndoCommandRunner&lt;/#if&gt;" />
+      <property name="destroyVerb" hidden="true" default="Undo" />
     </type>
     
 </synthetic>
