@@ -6,9 +6,9 @@
     <type type="cmd2.DeployedCommandFolder" extends="generic.ExecutedScriptWithDerivedArtifact" deployable-type="cmd2.CommandFolder">
       <generate-deployable type="cmd2.CommandFolder" extends="generic.Folder" />
 
-      <!-- list_of_string not supported yet :-( -->
-      <property name="command" description="The command(s) to run. Need to be correctly formatted and escaped for the target platform" />
-      <property name="undoCommand" required="false" description="If set, the command(s) to run to undo the execution of the command. May reference the same files as 'command'" />
+      <!-- allow multi-line commands -->
+      <property name="command" size="large" description="The command(s) to run. Need to be correctly formatted and escaped for the target platform" />
+      <property name="undoCommand" required="false" size="large" description="If set, the command(s) to run to undo the execution of the command. May reference the same files as 'command'" />
       <property name="envVars" kind="map_string_string" required="false" />
       <!-- admin properties -->
       <property name="createScript" hidden="true" default="cmd2/CommandRunner" />
@@ -20,9 +20,9 @@
     <type type="cmd2.DeployedCommand" extends="generic.ExecutedScript" deployable-type="cmd2.Command">
       <generate-deployable type="cmd2.Command" extends="generic.Resource" />
 
-      <!-- list_of_string not supported yet :-( -->
-      <property name="command" description="The command(s) to run. Needs to be correctly formatted and escaped for the target platform" />
-      <property name="undoCommand" required="false" description="If set, the command(s) to run to undo the execution of the command. May reference the same files as 'command'" />
+      <!-- allow multi-line commands -->
+      <property name="command" size="large" description="The command(s) to run. Needs to be correctly formatted and escaped for the target platform" />
+      <property name="undoCommand" required="false" size="large" description="If set, the command(s) to run to undo the execution of the command. May reference the same files as 'command'" />
       <property name="envVars" kind="map_string_string" required="false" />
       <!-- admin properties -->
       <property name="createScript" hidden="true" default="cmd2/CommandRunner" />
