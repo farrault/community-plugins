@@ -6,7 +6,7 @@ export ${envVar}="${envVars[envVar]}"
 </#list>
 
 <#if deployed.file??>
-REM do not remove - this actually triggers the upload
+# do not remove - this actually triggers the upload
 cd "${deployed.file}"
 </#if>
 
