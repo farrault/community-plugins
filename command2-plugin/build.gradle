@@ -1,3 +1,5 @@
+commonBuildPath = hasProperty("localCommonBuildRepo") ? file(localCommonBuildRepo).toURL().toString() : 'https://raw.github.com/xebialabs/deployit-common-build/master'
+
 apply plugin: 'java'
 apply plugin: 'maven'
 
@@ -11,6 +13,8 @@ sourceEncoding = 'UTF-8'
 dependencies {
   compile "com.xebialabs.deployit.plugins:generic-plugin:${apiVersion}"
 }
+
+apply from: "$commonBuildPath/repositories.gradle"
 
 afterEvaluate { eachProject ->
   Set testTasks = eachProject.tasks.withType(Test).all
