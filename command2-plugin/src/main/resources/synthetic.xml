@@ -10,9 +10,12 @@
       <property name="command" size="large" description="The command(s) to run. Need to be correctly formatted and escaped for the target platform" />
       <property name="undoCommand" required="false" size="large" description="If set, the command(s) to run to undo the execution of the command. May reference the same files as 'command'" />
       <property name="envVars" kind="map_string_string" required="false" />
+      <property name="alwaysRun" kind="boolean" required="false" />
       <!-- admin properties -->
       <property name="createScript" hidden="true" default="cmd2/CommandRunner" />
       <property name="createVerb" hidden="true" default="Run" />
+      <property name="noopScript" hidden="true" default="&lt;#if deployed.alwaysRun!false&gt;cmd2/CommandRunner&lt;/#if&gt;" />
+      <property name="noopVerb" hidden="true" default="Run" />
       <property name="destroyScript" hidden="true" default="&lt;#if deployed.undoCommand??&gt;cmd2/UndoCommandRunner&lt;/#if&gt;" />
       <property name="destroyVerb" hidden="true" default="Undo" />
     </type>
@@ -24,9 +27,12 @@
       <property name="command" size="large" description="The command(s) to run. Needs to be correctly formatted and escaped for the target platform" />
       <property name="undoCommand" required="false" size="large" description="If set, the command(s) to run to undo the execution of the command. May reference the same files as 'command'" />
       <property name="envVars" kind="map_string_string" required="false" />
+      <property name="alwaysRun" kind="boolean" required="false" />
       <!-- admin properties -->
       <property name="createScript" hidden="true" default="cmd2/CommandRunner" />
       <property name="createVerb" hidden="true" default="Run" />
+      <property name="noopScript" hidden="true" default="&lt;#if deployed.alwaysRun!false&gt;cmd2/CommandRunner&lt;/#if&gt;" />
+      <property name="noopVerb" hidden="true" default="Run" />
       <property name="destroyScript" hidden="true" default="&lt;#if deployed.undoCommand??&gt;cmd2/UndoCommandRunner&lt;/#if&gt;" />
       <property name="destroyVerb" hidden="true" default="Undo" />
     </type>
