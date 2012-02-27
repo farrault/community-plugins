@@ -29,7 +29,7 @@ configurations {
 	}
 }
 
-version = '3.6-SNAPSHOT'
+version = '3.6.0_1'
 apiVersion = '3.6.0'
 
 dependencies {
