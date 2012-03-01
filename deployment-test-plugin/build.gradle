@@ -1,6 +1,6 @@
 commonBuildPath = hasProperty("localCommonBuildRepo") ? file(localCommonBuildRepo).toURL().toString() : 'https://github.com/xebialabs/deployit-common-build/raw/master'
-apply from: 'https://github.com/xebialabs/deployit-common-build/raw/master/repositories.gradle'
-apply from: 'https://github.com/xebialabs/deployit-common-build/raw/master/plugin-build.gradle'
+apply from: "$commonBuildPath/repositories.gradle"
+apply from: "$commonBuildPath/plugin-build.gradle"
 
 repositories {
 	org.apache.ivy.util.url.CredentialsStore.INSTANCE.addCredentials("Sonatype Nexus Repository Manager", nexusHost, nexusUserName, nexusPassword);
