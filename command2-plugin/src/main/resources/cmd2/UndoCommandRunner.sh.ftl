@@ -10,6 +10,9 @@ export ${envVar}="${envVars[envVar]}"
 cd "${deployed.file}"
 </#if>
 
+<#if deployed.executionFlagPattern?has_content>
+chmod u+x ${deployed.executionFlagPattern}
+</#if>
 ${deployed.undoCommand}
 
 COMMAND_EXIT_CODE=$?

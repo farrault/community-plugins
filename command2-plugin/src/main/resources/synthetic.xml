@@ -18,6 +18,7 @@
       <property name="noopVerb" hidden="true" default="Run" />
       <property name="destroyScript" hidden="true" default="&lt;#if deployed.undoCommand??&gt;cmd2/UndoCommandRunner&lt;/#if&gt;" />
       <property name="destroyVerb" hidden="true" default="Undo" />
+      <property name="executionFlagPattern" hidden="true" default="*.sh"/>
     </type>
 
     <type type="cmd2.DeployedCommand" extends="generic.ExecutedScript" deployable-type="cmd2.Command">
